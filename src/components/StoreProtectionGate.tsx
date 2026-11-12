@@ -25,7 +25,26 @@ export const StoreProtectionGate: React.FC<StoreProtectionGateProps> = ({ childr
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleUnlockWithLicense = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const lic = params.get('license');
+      if (lic) {
+        validateStoreLicense(lic).then((valid) => {
+          if (valid) {
+            saveStoreAuthorization('license-key', 'Licenza sbloccata via link');
+            setAuth({
+              isAuthorized: true,
+              source: 'license-key',
+              details: 'Licenza sbloccata via link',
+            });
+          }
+        });
+      }
+    }
+  }, []);
+
+  const handleUnlockWithLicense = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
@@ -35,8 +54,9 @@ export const StoreProtectionGate: React.FC<StoreProtectionGateProps> = ({ childr
       return;
     }
 
-    if (validateStoreLicense(inputCode.trim())) {
-      saveStoreAuthorization('license-key', `Licenza attivata: ${inputCode.trim().toUpperCase()}`);
+    const isValid = await validateStoreLicense(inputCode.trim());
+    if (isValid) {
+      saveStoreAuthorization('license-key', 'Licenza verificata con successo');
       setSuccessMessage('Licenza verificata con successo! Avvio in corso...');
       setTimeout(() => {
         setAuth({
@@ -44,10 +64,10 @@ export const StoreProtectionGate: React.FC<StoreProtectionGateProps> = ({ childr
           source: 'license-key',
           details: 'Licenza attivata con successo',
         });
-      }, 700);
+      }, 500);
     } else {
       setErrorMessage(
-        'Codice non valido. Inserisci il numero di ordine di Google Play (es. GPA.xxxx-xxxx-xxxx-xxxxx), Apple App Store o una chiave autorizzata.'
+        'Codice non valido. Inserisci il numero di ordine di Google Play (es. GPA.xxxx-xxxx-xxxx-xxxxx) o una chiave autorizzata.'
       );
     }
   };

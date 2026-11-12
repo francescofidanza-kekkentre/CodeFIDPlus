@@ -1,0 +1,9 @@
+{
+  "appId": "com.codefidplus.tablet",
+  "appName": "CodeFID+",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -6,6 +6,27 @@ export interface StoreVerificationResult {
   details: string;
 }
 
+// Authorized SHA-256 hashes of master unlocking keys.
+// The plaintext password NEVER exists in the JavaScript code or bundle,
+// making it mathematically irreversible and protected against theft/reverse-engineering.
+const AUTHORIZED_SHA256_HASHES = new Set([
+  'b58f846695234676d28ee500640b88e5f2b55cfc53d5fdca839aafccc5df406c', // SHA-256
+]);
+
+/**
+ * Computes the SHA-256 hex digest using Web Crypto API.
+ */
+export async function computeSha256(text: string): Promise<string> {
+  try {
+    const msgUint8 = new TextEncoder().encode(text.trim());
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  } catch {
+    return '';
+  }
+}
+
 /**
  * Checks if the application is running inside an official Store-installed package,
  * or if a valid Store purchase/license has already been verified on this device.
@@ -32,7 +53,6 @@ export function checkStoreAuthorization(): StoreVerificationResult {
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search);
     const storeParam = params.get('store') || params.get('source');
-    const licenseParam = params.get('license');
 
     if (storeParam === 'playstore' || storeParam === 'google-play' || storeParam === 'twa') {
       saveStoreAuthorization('google-play', 'Lanciato da pacchetto ufficiale Google Play Store');
@@ -51,16 +71,6 @@ export function checkStoreAuthorization(): StoreVerificationResult {
         isAuthorized: true,
         source: 'apple-appstore',
         details: 'Pacchetto Apple App Store autorizzato',
-      };
-    }
-
-    if (licenseParam && validateStoreLicense(licenseParam)) {
-      saveStoreAuthorization('license-key', `Licenza sbloccata: ${licenseParam}`);
-      cleanUrlParams();
-      return {
-        isAuthorized: true,
-        source: 'license-key',
-        details: 'Codice licenza valido verificato',
       };
     }
 
@@ -134,40 +144,31 @@ export function revokeStoreAuthorization(): void {
 }
 
 /**
- * Validates a store license or purchase order code.
- * Accepts official purchase formats:
- * - PLAY-XXXX-XXXX
- * - APPLE-XXXX-XXXX
- * - CODEFID-STORE-XXXX
- * or standard alphanumeric purchase codes of at least 8 characters.
+ * Validates a store license or purchase order code using SHA-256 cryptographic hashes.
+ * Accepts:
+ * - Passphrases matching the precomputed SHA-256 hash (never exposed in clear text)
+ * - Official Google Play purchase Order IDs (GPA.xxxx-xxxx-xxxx-xxxxx)
  */
-export function validateStoreLicense(code: string): boolean {
+export async function validateStoreLicense(code: string): Promise<boolean> {
   if (!code || typeof code !== 'string') return false;
   const clean = code.trim().toUpperCase();
 
-  // Master activation code for testing/development
-  if (clean === 'CODEFID-STORE-2026' || clean === 'STORE-DEV-UNLOCK') {
+  // 1. Cryptographic SHA-256 Hash check (Zero plaintext secrets in client bundle)
+  const hash = await computeSha256(clean);
+  if (hash && AUTHORIZED_SHA256_HASHES.has(hash)) {
     return true;
   }
 
-  // Google Play / App Store Order ID pattern:
-  // e.g. GPA.1234-5678-9012-34567 or PLAY-XXXXX-XXXXX or APPLE-XXXXX-XXXXX
+  // 2. Google Play Order ID pattern (GPA.1234-5678-9012-34567)
   const playStoreRegex = /^GPA\.\d{4}-\d{4}-\d{4}-\d{5}$/i;
-  const storeKeyRegex = /^(PLAY|APPLE|CODEFID)-[A-Z0-9]{4,8}-[A-Z0-9]{4,8}$/i;
-
-  if (playStoreRegex.test(clean) || storeKeyRegex.test(clean)) {
-    return true;
-  }
-
-  // Generic purchase token of at least 12 alphanumeric characters
-  if (/^[A-Z0-9]{12,32}$/i.test(clean)) {
+  if (playStoreRegex.test(clean)) {
     return true;
   }
 
   return false;
 }
 
-function cleanUrlParams(): void {
+export function cleanUrlParams(): void {
   try {
     const url = new URL(window.location.href);
     url.searchParams.delete('store');
