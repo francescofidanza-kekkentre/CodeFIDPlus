@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+}
+
+/* Custom subtle scrollbars for Android tablet panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.45);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(129, 140, 248, 0.7);
+}
+
+/* CodeMirror 6 Tablet Touch Optimizations */
+.cm-editor {
+  height: 100%;
+  outline: none !important;
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.cm-scroller {
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 35vh;
+}
+
+.cm-gutters {
+  background-color: #0b0f19 !important;
+  border-right: 1px solid #1e293b !important;
+  color: #64748b !important;
+  padding-right: 4px;
+}
+
+.cm-activeLineGutter {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+  color: #a5b4fc !important;
+}
+
+.cm-activeLine {
+  background-color: rgba(99, 102, 241, 0.08) !important;
+}
+
+.cm-selectionBackground {
+  background-color: rgba(99, 102, 241, 0.32) !important;
+}
+
+/* Hide scrollbar on horizontal touch symbol bar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
