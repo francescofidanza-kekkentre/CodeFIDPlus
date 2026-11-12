@@ -112,12 +112,15 @@ export const TabletGate: React.FC<TabletGateProps> = ({ children }) => {
           💡 <strong>Come accedere da Tablet:</strong>
           <ul className="list-disc ml-4 mt-2 space-y-1.5 text-slate-300">
             <li>
-              <strong>Tablet Android:</strong> apri la pagina web da <em>Chrome</em> e tocca <em>"Installa App"</em> (oppure menu <code>⋮</code> → <em>"Aggiungi a schermata Home"</em>).
+              <strong>Tablet Android:</strong> scarica e installa l'app da <strong>Google Play Store</strong>.
             </li>
             <li>
-              <strong>Apple iPad (iOS / iPadOS):</strong> apri la pagina web da <em>Safari</em>, tocca l'icona <em>Condividi</em> (quadrato con freccia) e seleziona <em>"Aggiungi alla schermata Home"</em>.
+              <strong>Apple iPad (iOS / iPadOS):</strong> scarica e installa l'app da <strong>Apple App Store</strong>.
             </li>
           </ul>
+          <p className="mt-2.5 pt-2 border-t border-indigo-500/20 text-[11px] text-slate-400">
+            L'accesso è riservato esclusivamente all'applicazione installata tramite gli store ufficiali su tablet supportati.
+          </p>
         </div>
 
         {/* Buttons */}
