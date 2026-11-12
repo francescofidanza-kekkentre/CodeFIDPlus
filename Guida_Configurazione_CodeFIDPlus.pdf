@@ -1,0 +1,156 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 6962 >>
+stream
+q
+0.06 0.09 0.16 rg
+0.31 0.27 0.90 RG 0.8 w
+36 750 523 64 re B
+Q
+BT /F2 17 Tf 1 1 1 rg 52 788 Td (CodeFID+ | Guida all'Uso Post-Installazione) Tj ET
+BT /F1 9.5 Tf 0.78 0.83 0.90 rg 52 768 Td (Manuale di configurazione e uso quotidiano su Tablet Android) Tj ET
+q
+0.25 0.22 0.79 rg
+436 772 108 22 re f
+Q
+BT /F2 8.5 Tf 1 1 1 rg 447 779 Td (TABLET ANDROID) Tj ET
+q
+0.99 0.99 1 rg
+0.85 0.88 0.92 RG 0.8 w
+36 648 523 92 re B
+Q
+q
+0.31 0.27 0.90 rg
+48 710 18 18 re f
+Q
+BT /F2 9.5 Tf 1 1 1 rg 54 715 Td (1) Tj ET
+BT /F2 11.5 Tf 0.06 0.09 0.16 rg 72 714 Td (Primo Avvio dell'App su Tablet Android) Tj ET
+BT /F1 9.2 Tf 0.15 0.20 0.28 rg 52 694 Td (- Avvio Standalone:) Tj ET
+BT /F1 9.2 Tf 0.25 0.30 0.40 rg 145 694 Td (Tocca l'icona CodeFID+ sulla schermata Home: l'app parte a schermo intero) Tj ET
+BT /F1 9.2 Tf 0.25 0.30 0.40 rg 145 682 Td (senza barre del browser, massimizzando lo spazio per l'editor e il codice.) Tj ET
+BT /F1 9.2 Tf 0.15 0.20 0.28 rg 52 666 Td (- Tastiera Virtuale:) Tj ET
+BT /F1 9.2 Tf 0.25 0.30 0.40 rg 145 666 Td (All'apertura della tastiera Android, l'area di lavoro si adatta mantenendo visibili) Tj ET
+BT /F1 9.2 Tf 0.25 0.30 0.40 rg 145 654 Td (la riga attiva dell'editor e la Barra Simboli Rapida sopra la tastiera.) Tj ET
+q
+0.99 0.99 1 rg
+0.85 0.88 0.92 RG 0.8 w
+36 484 523 154 re B
+Q
+q
+0.31 0.27 0.90 rg
+48 610 18 18 re f
+Q
+BT /F2 9.5 Tf 1 1 1 rg 54 615 Td (2) Tj ET
+BT /F2 11.5 Tf 0.06 0.09 0.16 rg 72 614 Td (Configurazione del GitHub Personal Access Token \(PAT\)) Tj ET
+BT /F1 9 Tf 0.20 0.25 0.35 rg 52 594 Td (Per connettere l'app ai tuoi repository, gestire i file ed eseguire commit direttamente dal tablet:) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 52 578 Td (1. Su GitHub vai su Foto Profilo -> Settings -> Developer settings \(menu laterale in basso\).) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 52 564 Td (2. Tocca Personal access tokens -> Tokens \(classic\) -> Generate new token \(classic\).) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 52 550 Td (3. Inserisci un nome \(es. 'CodeFID+ Tablet'\) e seleziona i seguenti permessi:) Tj ET
+BT /F2 8.8 Tf 0.26 0.22 0.79 rg 68 537 Td (- repo \(obbligatorio: permette lettura/scrittura repository, rami, commit e Pull Request\)) Tj ET
+BT /F1 8.8 Tf 0.30 0.35 0.45 rg 68 525 Td (- workflow \(opzionale: utile se intendi gestire anche i file di GitHub Actions\)) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 52 511 Td (4. Copia il token \(formato ghp_...\) e apri l'app sul tablet.) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 52 497 Td (5. Tocca l'icona Impostazioni [ingranaggio] in alto a destra, incolla il token e tocca Salva e Applica.) Tj ET
+q
+0.99 0.99 1 rg
+0.85 0.88 0.92 RG 0.8 w
+36 296 523 178 re B
+Q
+q
+0.02 0.59 0.41 rg
+48 446 18 18 re f
+Q
+BT /F2 9.5 Tf 1 1 1 rg 54 451 Td (3) Tj ET
+BT /F2 11.5 Tf 0.06 0.09 0.16 rg 72 450 Td (Configurazione dell'Agente AI Ibrido \(Cloud vs Bridge PC\)) Tj ET
+BT /F1 9 Tf 0.30 0.35 0.45 rg 52 432 Td (Nelle Impostazioni dell'app puoi selezionare in qualsiasi momento una delle due modalita:) Tj ET
+q
+0.93 0.95 1 rg
+0.75 0.80 0.98 RG 0.8 w
+48 306 244 116 re B
+Q
+BT /F2 9.5 Tf 0.19 0.18 0.51 rg 58 408 Td (A. Modalita Cloud Autonoma \(Gemini API\)) Tj ET
+BT /F1 8.6 Tf 0.25 0.30 0.40 rg 58 393 Td (Funziona ovunque sul tablet senza computer:) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 58 379 Td (1. Crea una chiave API su Google AI Studio) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 58 365 Td (2. In CodeFID+ seleziona 'PWA Autonoma') Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 58 351 Td (3. Incolla la Gemini API Key \(AIzaSy...\)) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 58 337 Td (4. Scegli il modello \(gemini-2.5-pro per massima) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 68 325 Td (qualita o gemini-2.5-flash per velocita\)) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 58 313 Td (5. Tocca Salva e Applica.) Tj ET
+q
+0.92 0.99 0.96 rg
+0.65 0.92 0.81 RG 0.8 w
+303 306 244 116 re B
+Q
+BT /F2 9.5 Tf 0.02 0.47 0.34 rg 313 408 Td (B. Antigravity Python SDK Bridge) Tj ET
+BT /F1 8.6 Tf 0.25 0.30 0.40 rg 313 393 Td (Collega il tablet al runtime locale sul tuo PC:) Tj ET
+BT /F3 8 Tf 0.06 0.09 0.16 rg 313 378 Td (pip install -r backend/requirements.txt) Tj ET
+BT /F3 8 Tf 0.06 0.09 0.16 rg 313 366 Td (python backend/antigravity_bridge.py) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 313 351 Td (1. Leggi l'IP del PC \(es. 192.168.1.50\)) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 313 337 Td (2. In CodeFID+ seleziona 'Bridge SDK') Tj ET
+BT /F3 8 Tf 0.02 0.47 0.34 rg 313 324 Td (http://<IP-PC>:8765) Tj ET
+BT /F1 8.6 Tf 0.15 0.20 0.28 rg 313 312 Td (3. Tocca 'Test Connessione' e Salva.) Tj ET
+q
+0.99 0.99 1 rg
+0.85 0.88 0.92 RG 0.8 w
+36 50 523 236 re B
+Q
+q
+0.85 0.47 0.02 rg
+48 258 18 18 re f
+Q
+BT /F2 9.5 Tf 1 1 1 rg 54 263 Td (4) Tj ET
+BT /F2 11.5 Tf 0.06 0.09 0.16 rg 72 262 Td (Comandi Rapidi e Funzionalita Quotidiane dell'App) Tj ET
+BT /F2 9.2 Tf 0.19 0.18 0.51 rg 52 242 Td (- Barra Simboli Touch:) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 160 242 Td (Tocca { } \( \) [ ] => ; Tab e le frecce per digitare e spostare il cursore) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 160 230 Td (senza causare la chiusura della tastiera virtuale di Android.) Tj ET
+BT /F2 9.2 Tf 0.19 0.18 0.51 rg 52 214 Td (- Tasto AI su Selezione:) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 166 214 Td (Evidenzia righe di codice nell'editor e tocca il tasto 'AI' nella barra) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 166 202 Td (simboli: il frammento verra allegato al contesto per l'analisi o refactoring.) Tj ET
+BT /F2 9.2 Tf 0.19 0.18 0.51 rg 52 186 Td (- Diff e Applica \(1-Tap\):) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 164 186 Td (Ogni proposta dell'AI genera una card con il conteggio +righe / -righe.) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 164 174 Td (Tocca 'Anteprima Diff' per esaminarlo o 'Applica \(1-Tap\)' per integrarlo) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 164 162 Td (immediatamente nel file \(con pulsante rapido per annullare se necessario\).) Tj ET
+BT /F2 9.2 Tf 0.19 0.18 0.51 rg 52 146 Td (- Preview Live Split-Screen:) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 180 146 Td (Tocca 'Preview' in alto a destra sull'editor per visualizzare in tempo reale) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 180 134 Td (il rendering interattivo HTML/CSS/JS affiancato al codice sorgente.) Tj ET
+BT /F2 9.2 Tf 0.19 0.18 0.51 rg 52 118 Td (- Commit Multi-File e PR:) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 176 118 Td (I file modificati mostrano un indicatore di stato. Tocca 'Commit' in alto per) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 176 106 Td (selezionare i file, rivedere i diff pre-commit, pubblicare o creare Pull Request.) Tj ET
+BT /F2 9.2 Tf 0.19 0.18 0.51 rg 52 90 Td (- Salvataggio Bozze Locale:) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 182 90 Td (Tutte le modifiche non committate vengono salvate automaticamente nella) Tj ET
+BT /F1 9 Tf 0.15 0.20 0.28 rg 182 78 Td (memoria del tablet, garantendo continuita anche se cade la rete.) Tj ET
+BT /F1 8.5 Tf 0.50 0.55 0.65 rg 162 26 Td (CodeFID+ | Guida all'Uso Post-Installazione su Tablet Android | Pagina 1 di 1) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000261 00000 n 
+0000007275 00000 n 
+0000007372 00000 n 
+0000007474 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+7574
+%%EOF

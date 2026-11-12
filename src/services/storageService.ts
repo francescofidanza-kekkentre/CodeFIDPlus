@@ -205,15 +205,16 @@ if __name__ == "__main__":
   'README.md': {
     language: 'markdown',
     sha: 'demo-sha-4',
-    content: `# CodeFID+ | Antigravity GitHub Tablet PWA
+    content: `# CodeFID+ | Guida all'Uso Post-Installazione
 
-Benvenuto in **CodeFID+**, l'ambiente di sviluppo PWA progettato per **tablet Android** con architettura ibrida **GitHub API + Google Antigravity**.
+Benvenuto in **CodeFID+**, l'ambiente di sviluppo per **tablet Android** con architettura ibrida **GitHub API + Google Antigravity**.
 
-## Come iniziare rapidamente
-1. Tocca l'icona **Impostazioni (⚙️)** in alto a destra per inserire il tuo **GitHub Personal Access Token (PAT)** e la tua **Gemini API Key** (oppure l'URL del bridge locale Antigravity SDK).
-2. Esplora i file nella barra laterale sinistra o crea nuovi file.
-3. Usa la **Barra Simboli Touch** sopra la tastiera per inserire rapidamente parentesi, frecce e indentazioni.
-4. Apri il **Pannello Agente AI** a destra per generare o rifattorizzare codice e applicare i diff con **un solo tap**.
+## Come iniziare subito dopo l'installazione
+1. **GitHub Personal Access Token (PAT)**: su GitHub vai in *Settings → Developer settings → Personal access tokens → Tokens (classic)*, genera un token con permesso \`repo\` (\`ghp_...\`) e incollalo in **Impostazioni (⚙️)** in alto a destra.
+2. **Agente AI Antigravity**:
+   - **Modalità Cloud Autonoma**: inserisci la tua Gemini API Key (\`AIzaSy...\`) nelle Impostazioni per lavorare ovunque in mobilità.
+   - **Modalità Bridge PC**: avvia il bridge sul computer (\`python backend/antigravity_bridge.py\`) e inserisci l'indirizzo IP locale nelle Impostazioni.
+3. **Ergonomia Touch su Tablet**: usa la **Barra Simboli Touch** sopra la tastiera, il tasto **✨ AI** per analizzare il codice selezionato e il pulsante **Applica (1-Tap)** per applicare le proposte con anteprima diff!
 `,
   },
 };
