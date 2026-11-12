@@ -65,7 +65,7 @@ export const TabletGate: React.FC<TabletGateProps> = ({ children }) => {
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
           <strong className="text-indigo-400">CodeFID+</strong> è ottimizzata ed eseguibile
-          esclusivamente su <strong>tablet Android</strong> (e dispositivi tablet touch).
+          esclusivamente su <strong>tablet Android / iOS (iPad)</strong> (e dispositivi tablet touch).
           L'interfaccia a 3 pannelli e la barra simboli sono calibrate per l'ergonomia touch da 7" a 14".
         </p>
 
@@ -108,11 +108,15 @@ export const TabletGate: React.FC<TabletGateProps> = ({ children }) => {
         </div>
 
         {/* Instructions */}
-        <div className="p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/30 text-indigo-200 text-xs mb-6 w-full text-left">
-          💡 <strong>Come accedere:</strong>
-          <ul className="list-disc ml-4 mt-1.5 space-y-1 text-slate-300">
-            <li>Apri questa pagina web da <strong>Chrome sul tuo tablet Android</strong>.</li>
-            <li>Tocca <em>"Installa App"</em> per utilizzarla in modalità nativa a schermo intero.</li>
+        <div className="p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-500/30 text-indigo-200 text-xs mb-6 w-full text-left">
+          💡 <strong>Come accedere da Tablet:</strong>
+          <ul className="list-disc ml-4 mt-2 space-y-1.5 text-slate-300">
+            <li>
+              <strong>Tablet Android:</strong> apri la pagina web da <em>Chrome</em> e tocca <em>"Installa App"</em> (oppure menu <code>⋮</code> → <em>"Aggiungi a schermata Home"</em>).
+            </li>
+            <li>
+              <strong>Apple iPad (iOS / iPadOS):</strong> apri la pagina web da <em>Safari</em>, tocca l'icona <em>Condividi</em> (quadrato con freccia) e seleziona <em>"Aggiungi alla schermata Home"</em>.
+            </li>
           </ul>
         </div>
 
