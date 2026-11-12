@@ -24,6 +24,8 @@ import {
   saveDrafts,
   saveSettings,
   clearDraftsForRepo,
+  saveSession,
+  loadSession,
 } from './services/storageService';
 import {
   commitMultipleFilesToGitHub,
@@ -127,16 +129,32 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // Save settings & drafts automatically
+  // Save settings & workspace session automatically
   const repoKey = `${settings.activeOwner}/${settings.activeRepo}@${settings.activeBranch}`;
 
   useEffect(() => {
     saveSettings(settings);
   }, [settings]);
 
+  // Restore open session (tabs and active file) when repo is loaded or app re-opens
   useEffect(() => {
-    saveDrafts(repoKey, tabs);
-  }, [repoKey, tabs]);
+    if (settings.activeOwner && settings.activeRepo) {
+      const session = loadSession(repoKey);
+      if (session && session.tabs && session.tabs.length > 0) {
+        setTabs(session.tabs);
+        if (session.activeTabPath) {
+          setActiveTabPath(session.activeTabPath);
+        }
+      }
+    }
+  }, [repoKey]);
+
+  useEffect(() => {
+    if (settings.activeOwner && settings.activeRepo) {
+      saveSession(repoKey, tabs, activeTabPath);
+      saveDrafts(repoKey, tabs);
+    }
+  }, [repoKey, tabs, activeTabPath, settings.activeOwner, settings.activeRepo]);
 
   // Check local Antigravity SDK Bridge health when in bridge mode
   useEffect(() => {

@@ -2,6 +2,7 @@ import { AppSettings, FileTreeNode, OpenFileTab } from '../types';
 
 const SETTINGS_KEY = 'codefid_plus_settings_v1';
 const DRAFTS_KEY = 'codefid_plus_drafts_v1';
+const SESSION_KEY = 'codefid_plus_session_v1';
 
 export const DEFAULT_SETTINGS: AppSettings = {
   githubToken: '',
@@ -89,5 +90,32 @@ export function clearDraftsForRepo(repoKey: string): void {
     localStorage.removeItem(`${DRAFTS_KEY}_${repoKey}`);
   } catch {
     // ignore
+  }
+}
+
+export interface StoredSession {
+  repoKey: string;
+  tabs: OpenFileTab[];
+  activeTabPath: string;
+}
+
+export function saveSession(repoKey: string, tabs: OpenFileTab[], activeTabPath: string): void {
+  try {
+    if (!repoKey || repoKey.startsWith('/')) return;
+    const session: StoredSession = { repoKey, tabs, activeTabPath };
+    localStorage.setItem(`${SESSION_KEY}_${repoKey}`, JSON.stringify(session));
+  } catch (err) {
+    console.warn('Impossibile salvare sessione su localStorage:', err);
+  }
+}
+
+export function loadSession(repoKey: string): StoredSession | null {
+  try {
+    if (!repoKey || repoKey.startsWith('/')) return null;
+    const raw = localStorage.getItem(`${SESSION_KEY}_${repoKey}`);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
   }
 }
