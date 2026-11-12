@@ -155,8 +155,9 @@ export const SidebarExplorer: React.FC<SidebarExplorerProps> = ({
 
         {/* Repo Dropdown */}
         <select
-          value={`${activeOwner}/${activeRepo}`}
+          value={activeOwner && activeRepo ? `${activeOwner}/${activeRepo}` : ''}
           onChange={(e) => {
+            if (!e.target.value) return;
             const [owner, repo] = e.target.value.split('/');
             const found = repos.find((r) => r.full_name === e.target.value);
             if (owner && repo) {
@@ -165,9 +166,13 @@ export const SidebarExplorer: React.FC<SidebarExplorerProps> = ({
           }}
           className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-2 text-xs text-slate-100 font-medium outline-none focus:border-indigo-500"
         >
-          <option value={`${activeOwner}/${activeRepo}`}>
-            {activeOwner}/{activeRepo}
-          </option>
+          {activeOwner && activeRepo ? (
+            <option value={`${activeOwner}/${activeRepo}`}>
+              {activeOwner}/{activeRepo}
+            </option>
+          ) : (
+            <option value="">Nessun repository selezionato</option>
+          )}
           {repos
             .filter((r) => r.full_name !== `${activeOwner}/${activeRepo}`)
             .map((r) => (
@@ -237,8 +242,17 @@ export const SidebarExplorer: React.FC<SidebarExplorerProps> = ({
             <p>Sincronizzazione albero GitHub...</p>
           </div>
         ) : tree.length === 0 ? (
-          <div className="p-4 text-center text-xs text-slate-400">
-            Nessun file trovato. Tocca <strong>+</strong> per creare il primo file.
+          <div className="p-4 text-center text-xs text-slate-400 space-y-2">
+            {!activeOwner || !activeRepo ? (
+              <>
+                <p className="text-slate-200 font-medium">Nessun repository collegato</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Apri le <strong>Impostazioni (⚙️)</strong> in alto a destra per inserire il token e collegare il tuo repository.
+                </p>
+              </>
+            ) : (
+              <p>Repository vuoto. Tocca <strong>+</strong> per creare il primo file.</p>
+            )}
           </div>
         ) : (
           tree.map((node) => renderNode(node))

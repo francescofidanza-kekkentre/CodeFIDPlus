@@ -33,10 +33,10 @@ export function decodeBase64ToUtf8(base64: string): string {
 }
 
 export async function fetchUserRepos(token: string): Promise<GitHubRepo[]> {
-  const url = token.trim()
-    ? `${GITHUB_API_BASE}/user/repos?sort=updated&per_page=60&affiliation=owner,collaborator,organization_member`
-    : `${GITHUB_API_BASE}/users/francescofidanza-kekkentre/repos?sort=updated&per_page=30`;
-
+  if (!token.trim()) {
+    return [];
+  }
+  const url = `${GITHUB_API_BASE}/user/repos?sort=updated&per_page=100&affiliation=owner,collaborator,organization_member`;
   const res = await fetch(url, { headers: getHeaders(token) });
   if (!res.ok) {
     const errText = await res.text();
@@ -50,6 +50,9 @@ export async function fetchRepoBranches(
   repo: string,
   token: string
 ): Promise<GitHubBranch[]> {
+  if (!owner.trim() || !repo.trim()) {
+    return [];
+  }
   const res = await fetch(
     `${GITHUB_API_BASE}/repos/${owner}/${repo}/branches?per_page=100`,
     { headers: getHeaders(token) }
@@ -152,6 +155,9 @@ export async function fetchRepoFileTree(
   branch: string,
   token: string
 ): Promise<FileTreeNode[]> {
+  if (!owner.trim() || !repo.trim()) {
+    return [];
+  }
   const res = await fetch(
     `${GITHUB_API_BASE}/repos/${owner}/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
     { headers: getHeaders(token) }

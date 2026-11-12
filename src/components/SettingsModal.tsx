@@ -117,7 +117,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="text"
                   value={draft.activeOwner}
                   onChange={(e) => setDraft({ ...draft, activeOwner: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 outline-none"
+                  placeholder="es. username"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 outline-none placeholder:text-slate-600"
                 />
               </div>
               <div>
@@ -126,7 +127,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="text"
                   value={draft.activeRepo}
                   onChange={(e) => setDraft({ ...draft, activeRepo: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 outline-none"
+                  placeholder="es. mio-repository"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 outline-none placeholder:text-slate-600"
                 />
               </div>
               <div>
@@ -135,7 +137,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="text"
                   value={draft.activeBranch}
                   onChange={(e) => setDraft({ ...draft, activeBranch: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 outline-none"
+                  placeholder="main"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 outline-none placeholder:text-slate-600"
                 />
               </div>
             </div>

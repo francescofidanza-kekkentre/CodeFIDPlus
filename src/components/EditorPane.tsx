@@ -361,8 +361,8 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
             <p className="text-base font-medium text-slate-200 mb-1">
               Nessun file aperto nell'editor
             </p>
-            <p className="text-xs text-slate-400 max-w-md mb-4">
-              Seleziona un file dall'esploratore a sinistra oppure crea un nuovo file per iniziare a programmare sul tuo tablet Android.
+            <p className="text-xs text-slate-400 max-w-md mb-4 leading-relaxed">
+              Configura il tuo repository GitHub nelle <strong>Impostazioni (⚙️)</strong> oppure tocca <strong>+</strong> per creare un nuovo file sul tuo tablet.
             </p>
             <button
               type="button"

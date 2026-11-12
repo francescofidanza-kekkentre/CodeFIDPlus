@@ -19,8 +19,6 @@ import {
   OpenFileTab,
 } from './types';
 import {
-  DEMO_WORKSPACE_FILES,
-  getDemoFileTree,
   loadDrafts,
   loadSettings,
   saveDrafts,
@@ -61,28 +59,13 @@ export const App: React.FC = () => {
 
   // GitHub state
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
-  const [branches, setBranches] = useState<GitHubBranch[]>([
-    { name: 'main', commit: { sha: 'demo-main' } },
-  ]);
-  const [tree, setTree] = useState<FileTreeNode[]>(() => getDemoFileTree());
+  const [branches, setBranches] = useState<GitHubBranch[]>([]);
+  const [tree, setTree] = useState<FileTreeNode[]>([]);
   const [isLoadingTree, setIsLoadingTree] = useState<boolean>(false);
 
   // Editor Tabs state
-  const [tabs, setTabs] = useState<OpenFileTab[]>(() => {
-    const initialPaths = ['src/app.ts', 'index.html', 'backend/antigravity_agent.py'];
-    return initialPaths.map((p) => {
-      const demo = DEMO_WORKSPACE_FILES[p];
-      return {
-        path: p,
-        name: p.split('/').pop() || p,
-        content: demo.content,
-        originalContent: demo.content,
-        sha: demo.sha,
-        language: demo.language,
-      };
-    });
-  });
-  const [activeTabPath, setActiveTabPath] = useState<string>('src/app.ts');
+  const [tabs, setTabs] = useState<OpenFileTab[]>([]);
+  const [activeTabPath, setActiveTabPath] = useState<string>('');
 
   // Agent state
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -91,10 +74,10 @@ export const App: React.FC = () => {
       role: 'assistant',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       content:
-        'Ciao! Sono **Antigravity AI** su **CodeFID+**.\n\nSono pronto ad aiutarti a programmare su GitHub dal tuo tablet Android:\n- Seleziona un file o usa i chip rapidi qui sopra per analizzare o modificare il codice.\n- Ogni modifica proposta apparirà come **Card Interattiva** con statistiche `+righe / -righe`, **Anteprima Diff** e pulsante **Applica (1-Tap)**.',
+        'Ciao! Sono **Antigravity AI** su **CodeFID+**.\n\nL\'ambiente è pronto. Per iniziare, tocca l\'icona **Impostazioni (⚙️)** in alto a destra per inserire il tuo **GitHub Personal Access Token (PAT)** e collegare il tuo repository, oppure seleziona la modalità AI che preferisci.',
       thoughts: [
-        'Ambiente tablet Android rilevato e inizializzato.',
-        'Architettura ibrida pronta (Gemini Cloud API + Antigravity Python SDK Bridge).',
+        'Ambiente tablet rilevato e inizializzato.',
+        'In attesa di configurazione iniziale nelle Impostazioni.',
       ],
     },
   ]);
@@ -166,6 +149,20 @@ export const App: React.FC = () => {
 
   // Load GitHub repository data when token or active repo changes
   const syncGitHubWorkspace = useCallback(async () => {
+    if (!settings.activeOwner.trim() || !settings.activeRepo.trim()) {
+      if (settings.githubToken.trim()) {
+        try {
+          const userRepos = await fetchUserRepos(settings.githubToken);
+          if (userRepos.length > 0) setRepos(userRepos);
+        } catch {
+          // ignore
+        }
+      }
+      setTree([]);
+      setBranches([]);
+      return;
+    }
+
     setIsLoadingTree(true);
     try {
       const userRepos = await fetchUserRepos(settings.githubToken).catch(() => []);
@@ -190,33 +187,28 @@ export const App: React.FC = () => {
         settings.githubToken
       );
 
-      if (remoteTree.length > 0) {
-        setTree(remoteTree);
-        // Restore any saved local drafts for this repo
-        const drafts = loadDrafts(repoKey);
-        if (drafts.length > 0) {
-          setTabs((prev) => {
-            const map = new Map(prev.map((t) => [t.path, t]));
-            drafts.forEach((d) => {
-              map.set(d.path, {
-                path: d.path,
-                name: d.path.split('/').pop() || d.path,
-                content: d.content,
-                originalContent: d.originalContent,
-                sha: d.sha,
-                language: detectLanguageFromPath(d.path),
-                isNew: d.isNew,
-              });
+      setTree(remoteTree);
+      // Restore any saved local drafts for this repo
+      const drafts = loadDrafts(repoKey);
+      if (drafts.length > 0) {
+        setTabs((prev) => {
+          const map = new Map(prev.map((t) => [t.path, t]));
+          drafts.forEach((d) => {
+            map.set(d.path, {
+              path: d.path,
+              name: d.path.split('/').pop() || d.path,
+              content: d.content,
+              originalContent: d.originalContent,
+              sha: d.sha,
+              language: detectLanguageFromPath(d.path),
+              isNew: d.isNew,
             });
-            return Array.from(map.values());
           });
-        }
-      } else {
-        // Repo is empty on GitHub or no token yet -> keep starter workspace ready to commit!
-        setTree(getDemoFileTree());
+          return Array.from(map.values());
+        });
       }
     } catch {
-      // Keep starter workspace if offline or unauthenticated
+      setTree([]);
     } finally {
       setIsLoadingTree(false);
     }
@@ -241,22 +233,6 @@ export const App: React.FC = () => {
 
     const existing = tabs.find((t) => t.path === node.path);
     if (existing) {
-      setActiveTabPath(node.path);
-      return;
-    }
-
-    // Check if it's a demo file
-    if (node.sha.startsWith('demo-') && DEMO_WORKSPACE_FILES[node.path]) {
-      const demo = DEMO_WORKSPACE_FILES[node.path];
-      const newTab: OpenFileTab = {
-        path: node.path,
-        name: node.name,
-        content: demo.content,
-        originalContent: demo.content,
-        sha: demo.sha,
-        language: demo.language,
-      };
-      setTabs((prev) => [...prev, newTab]);
       setActiveTabPath(node.path);
       return;
     }
@@ -587,7 +563,9 @@ export const App: React.FC = () => {
                 </span>
               </div>
               <div className="text-[10px] font-mono text-slate-400 truncate">
-                {settings.activeOwner}/{settings.activeRepo} ({settings.activeBranch})
+                {settings.activeOwner && settings.activeRepo
+                  ? `${settings.activeOwner}/${settings.activeRepo} (${settings.activeBranch})`
+                  : 'Nessun repository configurato'}
               </div>
             </div>
           </div>
