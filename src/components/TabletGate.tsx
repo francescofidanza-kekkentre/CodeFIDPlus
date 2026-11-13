@@ -23,12 +23,20 @@ export const TabletGate: React.FC<TabletGateProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    checkDevice();
-    window.addEventListener('resize', checkDevice);
-    window.addEventListener('orientationchange', checkDevice);
+    let timer: number;
+    const handleResize = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        setInspection(inspectDevice());
+      }, 120);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
     return () => {
-      window.removeEventListener('resize', checkDevice);
-      window.removeEventListener('orientationchange', checkDevice);
+      window.clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
     };
   }, []);
 

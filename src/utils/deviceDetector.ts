@@ -37,10 +37,10 @@ export function inspectDevice(): DeviceInspection {
       maxTouchPoints > 1);
 
   // 3. Generic Tablet by Touch + Dimensions:
-  // Smartphones have minDim < 600px.
-  // Tablets typically have minDim >= 600px and touch support.
-  // Traditional desktop PCs usually have maxTouchPoints === 0 and minDim >= 700px.
-  const isGenericTablet = hasTouch && minDim >= 580 && minDim <= 1200;
+  // Smartphones have minDim < 580px.
+  // Tablets typically have minDim >= 580px and touch support (including large 12"-14.6" pro tablets).
+  // Traditional desktop PCs usually have maxTouchPoints === 0.
+  const isGenericTablet = hasTouch && minDim >= 580 && minDim <= 1600;
 
   if (isAndroidTablet) {
     return {

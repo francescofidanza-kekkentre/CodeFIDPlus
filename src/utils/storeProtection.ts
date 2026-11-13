@@ -18,13 +18,16 @@ const AUTHORIZED_SHA256_HASHES = new Set([
  */
 export async function computeSha256(text: string): Promise<string> {
   try {
-    const msgUint8 = new TextEncoder().encode(text.trim());
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    if (typeof crypto !== 'undefined' && crypto && crypto.subtle) {
+      const msgUint8 = new TextEncoder().encode(text.trim());
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
   } catch {
     return '';
   }
+  return '';
 }
 
 /**

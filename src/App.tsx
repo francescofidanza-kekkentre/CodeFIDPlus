@@ -65,9 +65,23 @@ export const App: React.FC = () => {
   const [tree, setTree] = useState<FileTreeNode[]>([]);
   const [isLoadingTree, setIsLoadingTree] = useState<boolean>(false);
 
-  // Editor Tabs state
-  const [tabs, setTabs] = useState<OpenFileTab[]>([]);
-  const [activeTabPath, setActiveTabPath] = useState<string>('');
+  // Editor Tabs state - lazily initialized from stored session so tabs appear immediately on first render
+  const [tabs, setTabs] = useState<OpenFileTab[]>(() => {
+    const s = loadSettings();
+    if (s.activeOwner && s.activeRepo) {
+      const sess = loadSession(`${s.activeOwner}/${s.activeRepo}@${s.activeBranch}`);
+      if (sess?.tabs && sess.tabs.length > 0) return sess.tabs;
+    }
+    return [];
+  });
+  const [activeTabPath, setActiveTabPath] = useState<string>(() => {
+    const s = loadSettings();
+    if (s.activeOwner && s.activeRepo) {
+      const sess = loadSession(`${s.activeOwner}/${s.activeRepo}@${s.activeBranch}`);
+      if (sess?.activeTabPath) return sess.activeTabPath;
+    }
+    return '';
+  });
 
   // Agent state
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -136,16 +150,18 @@ export const App: React.FC = () => {
     saveSettings(settings);
   }, [settings]);
 
-  // Restore open session (tabs and active file) when repo is loaded or app re-opens
+  const isInitialMount = React.useRef(true);
+
+  // Restore open session when switching to a different repository
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     if (settings.activeOwner && settings.activeRepo) {
       const session = loadSession(repoKey);
-      if (session && session.tabs && session.tabs.length > 0) {
-        setTabs(session.tabs);
-        if (session.activeTabPath) {
-          setActiveTabPath(session.activeTabPath);
-        }
-      }
+      setTabs(session?.tabs || []);
+      setActiveTabPath(session?.activeTabPath || '');
     }
   }, [repoKey]);
 
