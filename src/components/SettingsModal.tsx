@@ -73,7 +73,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex items-center gap-2.5">
             <Settings className="w-5 h-5 text-indigo-400" />
             <h3 className="text-sm font-bold text-slate-100">
-              Impostazioni CodeFID+ (GitHub & Antigravity Ibrido)
+              Impostazioni CodeFID+ (Git &amp; Assistente AI Ibrido)
             </h3>
           </div>
           <button
@@ -285,6 +285,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </label>
             </div>
           </section>
+
+          {/* Note Legali e Marchi */}
+          <div className="pt-2 text-[10px] text-slate-500 leading-relaxed border-t border-slate-800/60">
+            CodeFID+ è un software indipendente. GitHub® è un marchio registrato di GitHub, Inc. Google® e Gemini™ sono marchi di Google LLC. L'applicazione non è affiliata né sponsorizzata da GitHub, Inc. o Google LLC.
+          </div>
         </div>
 
         {/* Footer */}

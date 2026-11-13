@@ -70,3 +70,13 @@ Per collegare il tablet al runtime Python reale di Google Antigravity in esecuzi
 | **Gestione File e Branch** | La barra laterale a sinistra permette di esplorare l'albero dei file, passare rapidamente da un branch all'altro o crearne di nuovi. |
 | **Commit Multi-File e Pull Request** | I file modificati mostrano un indicatore di stato. Toccando il pulsante **Commit** in alto puoi esaminare l'elenco dei file, verificare i diff pre-commit, inserire il messaggio e pubblicare le modifiche su GitHub o aprire direttamente una Pull Request. |
 | **Salvataggio Locale delle Bozze** | Tutte le modifiche vengono preservate localmente in automatico per evitare perdite di lavoro accidentali in caso di disconnessione della rete. |
+
+---
+
+## ⚖️ Note Legali e Marchi Registrati
+
+* **CodeFID+** è un software indipendente sviluppato da sviluppatori terzi.
+* **GitHub®** è un marchio registrato di GitHub, Inc. / Microsoft Corporation.
+* **Google®**, **Gemini™** e **Android™** sono marchi di Google LLC.
+* **Apple®** e **iPad®** sono marchi registrati di Apple Inc.
+* Questa applicazione non è affiliata, autorizzata, sponsorizzata o approvata in alcun modo da GitHub, Inc., Microsoft Corporation, Google LLC o Apple Inc.

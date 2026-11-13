@@ -1,7 +1,7 @@
 {
-  "name": "CodeFID+ | Antigravity GitHub IDE",
+  "name": "CodeFID+ - Touch Code & Git IDE",
   "short_name": "CodeFID+",
-  "description": "PWA IDE ottimizzata per tablet Android per programmare su GitHub con agente AI Antigravity ibrido",
+  "description": "IDE touch per tablet ottimizzato per sviluppo di codice, gestione Git e assistenza AI",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -20,16 +20,16 @@
   ],
   "shortcuts": [
     {
-      "name": "Apri Agente Antigravity",
-      "short_name": "Agente AI",
-      "description": "Avvia subito una sessione di coding con l'agente AI",
+      "name": "Apri Assistente AI",
+      "short_name": "Assistente AI",
+      "description": "Avvia subito una sessione di coding con l'assistente AI",
       "url": "./index.html?panel=agent",
       "icons": [{ "src": "./icon.svg", "sizes": "192x192" }]
     },
     {
-      "name": "Commit Rapido GitHub",
+      "name": "Commit Rapido Git",
       "short_name": "Commit",
-      "description": "Visualizza i file modificati e fai commit su GitHub",
+      "description": "Visualizza i file modificati e gestisci i commit Git",
       "url": "./index.html?panel=git",
       "icons": [{ "src": "./icon.svg", "sizes": "192x192" }]
     }

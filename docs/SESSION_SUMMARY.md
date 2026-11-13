@@ -4,7 +4,7 @@ Questo documento contiene lo storico dettagliato dell'architettura, delle decisi
 
 > 💡 **Come riprendere il contesto su un altro computer o dispositivo:**  
 > Clona o fai `git pull` del repository, apri Antigravity e digita semplicemente:  
-> *"Leggi `docs/SESSION_SUMMARY.md` e riprendiamo da dove eravamo rimasti"*.
+> *"Leggi `docs/SESSION_SUMMARY.md` e `docs/CHAT_HISTORY.md` e riprendiamo da dove eravamo rimasti"*.
 
 ---
 
@@ -36,13 +36,16 @@ Questo documento contiene lo storico dettagliato dell'architettura, delle decisi
 | `src/components/AgentPanel.tsx` | Chat contestuale con l'Agente Antigravity, storico pensieri (`thoughts`), tool calls e card di applicazione diff. |
 | `src/services/githubService.ts` | Client REST e Git Data API per gestione repository, alberi file, commit multi-file e Pull Request. |
 | `src/services/storageService.ts` | Gestione persistente di impostazioni, sessione di lavoro (schede aperte, file attivo) e bozze locali in `localStorage`. |
+| `src/vite-env.d.ts` | Dichiarazioni ambientali TypeScript (`JSX.IntrinsicElements`) per azzerare gli errori di VS Code in assenza di `node_modules` locale. |
 | `backend/antigravity_bridge.py` | Server HTTP Python leggero per esporre l'SDK `google-antigravity` locale al tablet via LAN/Tailscale. |
 | `public/sw.js` & `index.html` | Service Worker `v2` con politica **Strict Network-First** (no cache statica per il codice web, auto-reload al deploy). |
 | `.github/workflows/deploy.yml` | Workflow GitHub Actions per compilare e distribuire automaticamente l'app su GitHub Pages ad ogni push. |
 | `.agents/rules/git-workflow.md` | Regola permanente per l'Agente: **nessun commit o push automatico**, l'utente gestisce sempre Git in autonomia. |
+| `.agents/rules/session-sync.md` | Regola permanente per l'Agente: **salvataggio e aggiornamento automatico dello storico chat** (`docs/SESSION_SUMMARY.md` e `docs/CHAT_HISTORY.md`) al termine di ogni risposta. |
 | `.vscode/settings.json` | Configurazione `css.lint.unknownAtRules: "ignore"` per silenziare i falsi allarmi del linter su `@tailwind`. |
 | `Guida_Configurazione_CodeFIDPlus.pdf` | Scheda PDF ad alta risoluzione (1 pagina A4) per la configurazione post-installazione sul tablet. |
 | `capacitor.config.json` | Configurazione per il packaging nativo Android (`.apk`/`.aab`) e iOS (`.ipa`). |
+| `docs/CHAT_HISTORY.md` | Trascrizione cronologica completa di domande, risposte, decisioni e comandi della sessione. |
 
 ---
 
@@ -55,6 +58,10 @@ Questo documento contiene lo storico dettagliato dell'architettura, delle decisi
 3. **Protezione Accesso Store:**
    * Chiunque provi ad aprire l'URL pubblico da un browser comune viene bloccato da una schermata di sicurezza che richiede l'acquisto su Google Play Store o Apple App Store.
    * La chiave di sblocco master per test/sviluppo (`CODEFID-STORE-2026`) è protetta tramite **hash crittografico irreversibile SHA-256** (`b58f846695234676d28ee500640b88e5f2b55cfc53d5fdca839aafccc5df406c`). Nessun testo in chiaro è presente nel bundle JavaScript.
+4. **Conformità Policy Store e Tutela Marchi Registrati:**
+   * Titolo standardizzato in `index.html` e `manifest.webmanifest`: `"CodeFID+ - Touch Code & Git IDE"`.
+   * Rimossi riferimenti che potevano suggerire un'affiliazione ufficiale diretta nei titoli principali dell'app.
+   * Inserito il disclaimer standard di non-affiliazione in `README.md` e nel modal delle Impostazioni (`SettingsModal.tsx`).
 
 ---
 
@@ -84,5 +91,9 @@ Quando si desidera impacchettare l'applicazione per la vendita su **Google Play 
 
 ---
 
-## 🔄 5. Regola Git Rispettata
-* Come da regola permanente `.agents/rules/git-workflow.md`, tutti i file sono lasciati modificati/pronti nell'area di lavoro senza eseguire comandi `git add`, `git commit` o `git push` automatici.
+## 🔄 5. Regole Permanenti del Progetto
+
+1. **Gestione Git (`.agents/rules/git-workflow.md`):**
+   * Tutti i file vengono lasciati modificati/pronti nell'area di lavoro senza eseguire comandi `git add`, `git commit` o `git push` automatici.
+2. **Sincronizzazione Sessione (`.agents/rules/session-sync.md`):**
+   * Alla fine di ogni turno, i file `docs/SESSION_SUMMARY.md` e `docs/CHAT_HISTORY.md` vengono aggiornati per preservare l'intero contesto e permetterne la sincronizzazione con qualsiasi altro dispositivo.

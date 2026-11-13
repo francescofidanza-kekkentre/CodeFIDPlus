@@ -2,7 +2,7 @@
   "name": "codefid-plus",
   "private": true,
   "version": "1.0.0",
-  "description": "PWA IDE ottimizzata per tablet Android per programmare su GitHub con integrazione ibrida Antigravity AI",
+  "description": "IDE touch per tablet per sviluppo codice e gestione Git con assistenza AI ibrida",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
