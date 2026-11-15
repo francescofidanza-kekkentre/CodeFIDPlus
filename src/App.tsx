@@ -73,17 +73,19 @@ export const App: React.FC = () => {
 
   // Editor Tabs state - lazily initialized from stored session so tabs appear immediately on first render
   const [tabs, setTabs] = useState<OpenFileTab[]>(() => {
-    const s = loadSettings();
-    if (s.activeOwner && s.activeRepo) {
-      const sess = loadSession(`${s.activeOwner}/${s.activeRepo}@${s.activeBranch}`);
+    if (settings.activeOwner && settings.activeRepo) {
+      const sess = loadSession(
+        `${settings.activeOwner}/${settings.activeRepo}@${settings.activeBranch}`
+      );
       if (sess?.tabs && sess.tabs.length > 0) return sess.tabs;
     }
     return [];
   });
   const [activeTabPath, setActiveTabPath] = useState<string>(() => {
-    const s = loadSettings();
-    if (s.activeOwner && s.activeRepo) {
-      const sess = loadSession(`${s.activeOwner}/${s.activeRepo}@${s.activeBranch}`);
+    if (settings.activeOwner && settings.activeRepo) {
+      const sess = loadSession(
+        `${settings.activeOwner}/${settings.activeRepo}@${settings.activeBranch}`
+      );
       if (sess?.activeTabPath) return sess.activeTabPath;
     }
     return '';
@@ -545,9 +547,13 @@ export const App: React.FC = () => {
     setActiveTabPath(proposal.filePath);
 
     // Ensure new file is visible in tree
+    const treeContainsPath = (nodes: FileTreeNode[], targetPath: string): boolean =>
+      nodes.some(
+        (n) => n.path === targetPath || (n.children ? treeContainsPath(n.children, targetPath) : false)
+      );
+
     setTree((prev) => {
-      const existsInTree = JSON.stringify(prev).includes(`"${proposal.filePath}"`);
-      if (existsInTree) return prev;
+      if (treeContainsPath(prev, proposal.filePath)) return prev;
       return [
         ...prev,
         {
@@ -653,7 +659,7 @@ export const App: React.FC = () => {
               <div className="text-xs font-extrabold tracking-tight text-white flex items-center gap-1.5">
                 <span>CodeFID+</span>
                 <span className="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                  Antigravity Tablet PWA
+                  PWA Tablet AI Coding
                 </span>
               </div>
               <div className="text-[10px] font-mono text-slate-400 truncate">

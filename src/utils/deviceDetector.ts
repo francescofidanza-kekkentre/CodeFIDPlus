@@ -20,7 +20,6 @@ export function inspectDevice(): DeviceInspection {
   const screenW = typeof window !== 'undefined' ? window.innerWidth : 1024;
   const screenH = typeof window !== 'undefined' ? window.innerHeight : 768;
   const minDim = Math.min(screenW, screenH);
-  const maxDim = Math.max(screenW, screenH);
 
   // 1. Android Tablet Detection:
   // Google's official standard: Android phones contain "Android" AND "Mobile".

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   X,
   Settings,
@@ -35,6 +35,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     message: string;
   }>({ checked: false, ok: false, message: '' });
   const [testingBridge, setTestingBridge] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDraft(settings);
+      setBridgeStatus({ checked: false, ok: false, message: '' });
+    }
+  }, [isOpen, settings]);
 
   if (!isOpen) return null;
 

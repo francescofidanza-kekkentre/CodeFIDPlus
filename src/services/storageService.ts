@@ -1,4 +1,4 @@
-import { AppSettings, FileTreeNode, OpenFileTab } from '../types';
+import { AppSettings, OpenFileTab } from '../types';
 
 const SETTINGS_KEY = 'codefid_plus_settings_v1';
 const DRAFTS_KEY = 'codefid_plus_drafts_v1';

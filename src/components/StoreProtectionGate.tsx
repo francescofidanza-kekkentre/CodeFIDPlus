@@ -5,7 +5,6 @@ import {
   KeyRound,
   CheckCircle2,
   AlertCircle,
-  ExternalLink,
   Smartphone,
 } from 'lucide-react';
 import {
