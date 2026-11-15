@@ -31,12 +31,25 @@
     <script type="module" src="/src/main.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+
         window.addEventListener('load', () => {
           navigator.serviceWorker
             .register('./sw.js', { updateViaCache: 'none' })
             .then((registration) => {
-              // Controlla aggiornamenti a ogni avvio dell'app
+              // Controlla aggiornamenti a ogni avvio dell'app e al ritorno in primo piano
               registration.update();
+              document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                  registration.update().catch(() => {});
+                }
+              });
+
               registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
                 if (newWorker) {

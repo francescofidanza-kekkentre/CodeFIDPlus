@@ -1,4 +1,4 @@
-const CACHE_NAME = 'codefid-plus-v2';
+const CACHE_NAME = 'codefid-plus-v3';
 
 // Force immediate activation without waiting for existing tabs to close
 self.addEventListener('install', (event) => {
@@ -32,16 +32,18 @@ self.addEventListener('fetch', (event) => {
   if (
     url.hostname.includes('api.github.com') ||
     url.hostname.includes('generativelanguage.googleapis.com') ||
-    url.pathname.includes('/api/antigravity')
+    url.hostname.includes('api.anthropic.com') ||
+    url.pathname.includes('/api/antigravity') ||
+    url.pathname.includes('/api/claude')
   ) {
     return;
   }
 
   // 2. Strict Network-First Strategy:
-  // ALWAYS fetch fresh from the network (no-cache) so the user gets the latest UI updates.
+  // ALWAYS fetch fresh from the network (no-store) so the user gets the latest UI updates.
   // Fall back to cache ONLY when offline.
   event.respondWith(
-    fetch(request, { cache: 'no-cache' })
+    fetch(request, { cache: 'no-store' })
       .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
