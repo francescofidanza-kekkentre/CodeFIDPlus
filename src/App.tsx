@@ -49,6 +49,7 @@ import { AgentPanel } from './components/AgentPanel';
 import { DiffViewerModal } from './components/DiffViewerModal';
 import { GitCommitModal } from './components/GitCommitModal';
 import { SettingsModal } from './components/SettingsModal';
+import { ActionInputModal } from './components/ActionInputModal';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -106,6 +107,7 @@ export const App: React.FC = () => {
   // Modals state
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showCommitModal, setShowCommitModal] = useState<boolean>(false);
+  const [actionModalMode, setActionModalMode] = useState<'file' | 'branch' | null>(null);
   const [diffModalState, setDiffModalState] = useState<{
     isOpen: boolean;
     filePath: string;
@@ -364,13 +366,9 @@ export const App: React.FC = () => {
     );
   };
 
-  const handleNewFilePrompt = () => {
-    const filePath = window.prompt(
-      'Inserisci il percorso del nuovo file (es. src/components/Button.tsx):',
-      'src/nuovoFile.ts'
-    );
-    if (!filePath || !filePath.trim()) return;
+  const handleCreateNewFile = (filePath: string) => {
     const cleanPath = filePath.trim().replace(/^\/+/, '');
+    if (!cleanPath) return;
     const name = cleanPath.split('/').pop() || cleanPath;
     const lang = detectLanguageFromPath(cleanPath);
 
@@ -398,13 +396,13 @@ export const App: React.FC = () => {
     ]);
   };
 
-  const handleCreateBranchPrompt = async () => {
-    const newBranch = window.prompt(
-      `Crea un nuovo branch a partire da "${settings.activeBranch}":`,
-      'feat/tablet-update'
-    );
-    if (!newBranch || !newBranch.trim()) return;
+  const handleNewFilePrompt = () => {
+    setActionModalMode('file');
+  };
+
+  const handleCreateNewBranch = async (newBranch: string) => {
     const cleanName = newBranch.trim();
+    if (!cleanName) return;
 
     if (!settings.githubToken.trim()) {
       setBranches((prev) => [
@@ -415,31 +413,29 @@ export const App: React.FC = () => {
       return;
     }
 
-    try {
-      const currentBranchObj = branches.find((b) => b.name === settings.activeBranch);
-      const baseSha = currentBranchObj?.commit.sha || branches[0]?.commit.sha;
-      if (!baseSha) throw new Error('SHA del branch di partenza non trovato.');
-      await createNewBranch(
-        settings.activeOwner,
-        settings.activeRepo,
-        cleanName,
-        baseSha,
-        settings.githubToken
-      );
-      const updatedBranches = await fetchRepoBranches(
-        settings.activeOwner,
-        settings.activeRepo,
-        settings.githubToken
-      );
-      setBranches(updatedBranches);
-      setSettings((s) => ({ ...s, activeBranch: cleanName }));
-    } catch (err) {
-      window.alert(
-        `Impossibile creare il branch su GitHub: ${
-          err instanceof Error ? err.message : String(err)
-        }`
-      );
+    const currentBranchObj = branches.find((b) => b.name === settings.activeBranch);
+    const baseSha = currentBranchObj?.commit.sha || branches[0]?.commit.sha;
+    if (!baseSha) {
+      throw new Error('SHA del branch di partenza non trovato.');
     }
+    await createNewBranch(
+      settings.activeOwner,
+      settings.activeRepo,
+      cleanName,
+      baseSha,
+      settings.githubToken
+    );
+    const updatedBranches = await fetchRepoBranches(
+      settings.activeOwner,
+      settings.activeRepo,
+      settings.githubToken
+    );
+    setBranches(updatedBranches);
+    setSettings((s) => ({ ...s, activeBranch: cleanName }));
+  };
+
+  const handleCreateBranchPrompt = () => {
+    setActionModalMode('branch');
   };
 
   // Send prompt to Antigravity AI
@@ -920,6 +916,25 @@ export const App: React.FC = () => {
         settings={settings}
         onSave={(newSettings) => setSettings(newSettings)}
         onClose={() => setShowSettingsModal(false)}
+      />
+
+      {/* Custom Dark Modal for New File / New Branch (replaces native browser prompt) */}
+      <ActionInputModal
+        isOpen={actionModalMode !== null}
+        mode={actionModalMode ?? 'file'}
+        title={actionModalMode === 'branch' ? 'Crea Nuovo Branch' : 'Crea Nuovo File'}
+        description={
+          actionModalMode === 'branch'
+            ? `Crea un nuovo branch a partire da "${settings.activeBranch}":`
+            : 'Inserisci il percorso del nuovo file (es. src/components/Button.tsx):'
+        }
+        defaultValue={actionModalMode === 'branch' ? 'feat/tablet-update' : 'src/nuovoFile.ts'}
+        placeholder={actionModalMode === 'branch' ? 'feat/nuovo-branch' : 'src/nuovoFile.ts'}
+        confirmLabel={actionModalMode === 'branch' ? 'Crea Branch' : 'Crea File'}
+        onConfirm={(val) =>
+          actionModalMode === 'branch' ? handleCreateNewBranch(val) : handleCreateNewFile(val)
+        }
+        onClose={() => setActionModalMode(null)}
       />
     </div>
   );
