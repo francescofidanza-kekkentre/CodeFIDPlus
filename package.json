@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "typecheck": "tsc -b",
+    "typecheck": "NODE_OPTIONS='--max-old-space-size=384' tsc --noEmit",
     "build": "tsc -b && vite build",
     "build:lowmem": "NODE_OPTIONS='--max-old-space-size=1024' npm run build",
     "preview": "vite preview --host"
