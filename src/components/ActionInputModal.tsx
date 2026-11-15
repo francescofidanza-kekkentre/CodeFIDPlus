@@ -60,13 +60,13 @@ export const ActionInputModal: React.FC<ActionInputModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-start justify-center p-3 sm:p-6 pt-4 sm:pt-8 overflow-y-auto"
       onClick={onClose}
     >
       <form
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-[#111827] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden"
+        className="w-full max-w-md max-h-[calc(100dvh-2rem)] flex flex-col bg-[#111827] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden"
       >
         {/* Header */}
         <div className="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
@@ -88,7 +88,7 @@ export const ActionInputModal: React.FC<ActionInputModalProps> = ({
         </div>
 
         {/* Body */}
-        <div className="p-4 space-y-3 text-xs">
+        <div className="p-3.5 sm:p-4 space-y-2.5 text-xs overflow-y-auto">
           <p className="text-slate-300">{description}</p>
           <input
             type="text"
