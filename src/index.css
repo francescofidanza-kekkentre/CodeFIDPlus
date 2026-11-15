@@ -10,6 +10,7 @@
     width: 100vw;
     overflow: hidden;
     overscroll-behavior: none;
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }

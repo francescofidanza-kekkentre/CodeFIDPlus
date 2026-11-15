@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   PanelLeft,
   Sparkles,
@@ -133,6 +133,7 @@ export const App: React.FC = () => {
   );
   const canUseFullscreen =
     typeof document !== 'undefined' && Boolean(document.fullscreenEnabled);
+  const userExitedFullscreenRef = useRef<boolean>(false);
 
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
@@ -150,17 +151,26 @@ export const App: React.FC = () => {
     window.addEventListener('offline', handleOffline);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
-    // On Android tablets, automatically enter immersive fullscreen (hiding bottom nav bar) on first tap
+    // On Android tablets, automatically enter immersive fullscreen (hiding bottom nav bar)
     const isAndroidDevice = /Android/i.test(navigator.userAgent);
-    const handleFirstAndroidTap = () => {
-      if (document.fullscreenEnabled && !document.fullscreenElement) {
+    const tryEnterAndroidFullscreen = () => {
+      if (
+        !userExitedFullscreenRef.current &&
+        document.fullscreenEnabled &&
+        !document.fullscreenElement
+      ) {
         document.documentElement
           .requestFullscreen({ navigationUI: 'hide' })
           .catch(() => {});
       }
     };
+
     if (isAndroidDevice && document.fullscreenEnabled) {
-      window.addEventListener('pointerdown', handleFirstAndroidTap, { once: true });
+      // Attempt immediately (succeeds in permissive WebViews/TWA)
+      tryEnterAndroidFullscreen();
+      // Reliable user-activation events in Android Chrome ('click' / 'touchend')
+      window.addEventListener('touchend', tryEnterAndroidFullscreen, { passive: true });
+      window.addEventListener('click', tryEnterAndroidFullscreen, { passive: true });
     }
 
     return () => {
@@ -168,7 +178,8 @@ export const App: React.FC = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      window.removeEventListener('pointerdown', handleFirstAndroidTap);
+      window.removeEventListener('touchend', tryEnterAndroidFullscreen);
+      window.removeEventListener('click', tryEnterAndroidFullscreen);
     };
   }, []);
 
@@ -592,8 +603,10 @@ export const App: React.FC = () => {
   const handleToggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
+        userExitedFullscreenRef.current = false;
         await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
       } else {
+        userExitedFullscreenRef.current = true;
         await document.exitFullscreen();
       }
     } catch {
