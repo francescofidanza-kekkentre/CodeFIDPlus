@@ -29,7 +29,6 @@ import {
   clearDraftsForRepo,
   saveSession,
   loadSession,
-  isSetupWizardCompleted,
   markSetupWizardCompleted,
 } from './services/storageService';
 import {
@@ -112,13 +111,7 @@ export const App: React.FC = () => {
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showCommitModal, setShowCommitModal] = useState<boolean>(false);
   const [actionModalMode, setActionModalMode] = useState<'file' | 'branch' | null>(null);
-  const [showSetupWizard, setShowSetupWizard] = useState<boolean>(() => {
-    const s = loadSettings();
-    const hasAnyConfig = Boolean(
-      s.githubToken.trim() || s.geminiApiKey.trim() || s.claudeApiKey.trim()
-    );
-    return !hasAnyConfig && !isSetupWizardCompleted();
-  });
+  const [showSetupWizard, setShowSetupWizard] = useState<boolean>(false);
   const [diffModalState, setDiffModalState] = useState<{
     isOpen: boolean;
     filePath: string;
