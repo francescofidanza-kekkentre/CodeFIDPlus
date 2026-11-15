@@ -163,6 +163,13 @@ Quando apri questo progetto con Antigravity su un altro computer:
   - `src/App.tsx`: aggiunto pulsante di attivazione/uscita schermo intero (`Maximize2`/`Minimize2`) nell'header (visibile sui dispositivi compatibili con Fullscreen API come i tablet Android) che invoca `document.documentElement.requestFullscreen({ navigationUI: 'hide' })` e si sincronizza con l'evento `fullscreenchange`.
   - Eseguito `npm run typecheck` con esito `0`.
 
+### 22. Nascondimento Automatico Barra Inferiore su Tablet Android
+- **Richiesta:** "su android esce sempre barra inferiore con icone"
+- **Implementazione & Spiegazione:**
+  - `src/App.tsx`: aggiunto listener `pointerdown` con `{ once: true }` per i dispositivi Android che attiva automaticamente `document.documentElement.requestFullscreen({ navigationUI: 'hide' })` al primo tocco, nascondendo la barra di navigazione/taskbar inferiore di Android senza attendere il click sul pulsante dedicato.
+  - Spiegato che per rendere effettiva la modifica sul tablet occorre prima fare commit/push su GitHub (deploy) e, se la PWA era già installata, rimuoverla e reinstallarla da Chrome affinché aggiorni il manifest `"display": "fullscreen"`.
+  - Eseguito `npm run typecheck` con esito `0`.
+
 ---
 
 ## 🔒 Regole di Progetto Permanenti

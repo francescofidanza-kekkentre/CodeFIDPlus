@@ -147,11 +147,26 @@ export const App: React.FC = () => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    // On Android tablets, automatically enter immersive fullscreen (hiding bottom nav bar) on first tap
+    const isAndroidDevice = /Android/i.test(navigator.userAgent);
+    const handleFirstAndroidTap = () => {
+      if (document.fullscreenEnabled && !document.fullscreenElement) {
+        document.documentElement
+          .requestFullscreen({ navigationUI: 'hide' })
+          .catch(() => {});
+      }
+    };
+    if (isAndroidDevice && document.fullscreenEnabled) {
+      window.addEventListener('pointerdown', handleFirstAndroidTap, { once: true });
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      window.removeEventListener('pointerdown', handleFirstAndroidTap);
     };
   }, []);
 
