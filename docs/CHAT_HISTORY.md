@@ -128,6 +128,27 @@ Quando apri questo progetto con Antigravity su un altro computer:
   - Eseguito `npm install` (aggiunti 165 pacchetti) e `npm run build` (`tsc -b && vite build`).
   - **Build riuscita con esito 0** in 15.06s (1629 moduli trasformati, output in `dist/index.html`, `dist/assets/index-CJgF7Oav.css`, `dist/assets/index-BvBPtCDK.js`), confermando l'assenza di errori TypeScript dopo l'integrazione di Claude.
 
+### 18. Icone Dedicate per iPad / iPadOS (`apple-touch-icon`)
+- **Richiesta:** "aggiungi un icona per la versione per ipad"
+- **Implementazione:**
+  - Generate tramite `rsvg-convert` le icone PNG in `public/icons/` a partire da `public/icon.svg` (con sfondo pieno `#0f172a` per le icone Apple in modo da evitare bordi neri con la maschera squircle di iPadOS):
+    - `public/icons/apple-touch-icon.png` (`180x180`)
+    - `public/icons/apple-touch-icon-152x152.png` (iPad / iPad mini Retina)
+    - `public/icons/apple-touch-icon-167x167.png` (iPad Pro Retina)
+    - `public/icons/apple-touch-icon-180x180.png` (iPadOS / iOS high-DPI)
+    - `public/icons/icon-192x192.png` e `public/icons/icon-512x512.png` (per `manifest.webmanifest`)
+  - Aggiornato `index.html` con `<meta name="apple-mobile-web-app-title" content="CodeFID+" />` e i relativi `<link rel="apple-touch-icon" sizes="...">`.
+  - Aggiornato `public/manifest.webmanifest` includendo le icone PNG accanto a `icon.svg`.
+  - Eseguito `npx tsc -b` con esito `0`; `vite build` lanciato dentro l'ambiente IDE ha causato picco di memoria/riavvio del server Antigravity. Spiegata all'utente la causa (esaurimento RAM / OOM durante il bundling di 1629 moduli nell'ambiente Flatpak/IDE) e le alternative sicure (`tsc -b` locale, terminale esterno o GitHub Actions).
+
+### 19. Controlli Ottimizzati, Chunk Splitting & Regola Permanente di Verifica
+- **Richiesta:** "implementa questi controlli ottimizzati quando ritieni che siano necessari"
+- **Implementazione:**
+  - `package.json`: aggiunti gli script `"typecheck": "tsc -b"` (controllo veloce e leggero) e `"build:lowmem": "NODE_OPTIONS='--max-old-space-size=1024' npm run build"`.
+  - `vite.config.ts`: configurato `build.rollupOptions.output.manualChunks` per suddividere il bundle in `react-vendor`, `codemirror-vendor` e `icons-vendor`, riducendo i picchi di memoria in build e migliorando il caricamento su tablet.
+  - `.agents/rules/build-verification.md`: creata regola permanente `always_on` che istruisce l'agente a eseguire `npm run typecheck` dopo modifiche TypeScript, a saltare `vite build` per modifiche puramente statiche e a riservare la build completa a terminali esterni o GitHub Actions.
+  - Eseguito `npm run typecheck` con esito `0`.
+
 ---
 
 ## 🔒 Regole di Progetto Permanenti
