@@ -89,6 +89,27 @@ Quando apri questo progetto con Antigravity su un altro computer:
   - Creata la regola permanente `.agents/rules/session-sync.md` con trigger `always_on`.
   - Ad ogni turno dell'agente, i file `docs/SESSION_SUMMARY.md` e `docs/CHAT_HISTORY.md` vengono automaticamente aggiornati con le ultime modifiche, decisioni tecniche e stato del repository, pronti per essere sincronizzati con GitHub per gli altri dispositivi.
 
+### 11. Ripresa della Sessione (2026-11-15)
+- **Richiesta:** Lettura di `docs/SESSION_SUMMARY.md` e `docs/CHAT_HISTORY.md` per riprendere il contesto di lavoro su **CodeFID+**.
+- **Stato:** Contesto ripristinato completamente. Nessuna modifica al codice applicativo effettuata in questo turno; in attesa delle prossime indicazioni dell'utente.
+
+### 12. Focus sulla Chiave SHA-256 (`storeProtection.ts`)
+- **Richiesta:** "voglio ripartire dalla chiave SHA".
+- **Analisi:** Letti `src/utils/storeProtection.ts` e `src/components/StoreProtectionGate.tsx`. Verificato l'hash SHA-256 attuale in `AUTHORIZED_SHA256_HASHES` (`b58f846695234676d28ee500640b88e5f2b55cfc53d5fdca839aafccc5df406c`), la funzione `computeSha256` basata su Web Crypto API e `validateStoreLicense` (che normalizza in `.trim().toUpperCase()` prima dell'hashing e accetta anche il pattern Google Play Order ID `GPA.xxxx-xxxx-xxxx-xxxxx`). In attesa che l'utente specifichi l'operazione desiderata.
+
+### 13. Recupero Chiave di Sblocco Master
+- **Richiesta:** "quale era il codice per sbloccare app?"
+- **Risposta:** Indicato il codice master documentato in `docs/SESSION_SUMMARY.md`: `CODEFID-STORE-2026` (corrispondente all'hash SHA-256 `b58f846695234676d28ee500640b88e5f2b55cfc53d5fdca839aafccc5df406c` presente in `src/utils/storeProtection.ts`).
+
+### 14. Compatibilità con Agente Claude (Anthropic)
+- **Richiesta:** "implementa compatibilità con agente Claude"
+- **Implementazione:**
+  - `src/types.ts` & `src/services/storageService.ts`: esteso `AIMode` con `'claude-direct'` e aggiunti `claudeApiKey` e `claudeModel` (default `'claude-sonnet-4-20250514'`) in `AppSettings` / `DEFAULT_SETTINGS`.
+  - `src/services/aiService.ts`: implementata l'integrazione diretta con Anthropic Messages API (`https://api.anthropic.com/v1/messages`) con header `anthropic-dangerous-direct-browser-access: true`, helper `buildClaudeMessages` per garantire turni alternati `user`/`assistant`, estrazione di blocchi `text` e `thinking`, e generazione automatica delle `CodeProposal` per l'applicazione con 1 tap.
+  - `src/components/SettingsModal.tsx`: aggiunta la scheda di selezione **PWA Autonoma (Claude)** con campo `Claude API Key` (`sk-ant-...`), selettore modello (`claude-sonnet-4-20250514`, `claude-3-7-sonnet-20250219`, `claude-3-5-haiku-20241022`) e aggiornamento delle note legali sui marchi Anthropic®/Claude™.
+  - `src/components/AgentPanel.tsx` & `src/App.tsx`: aggiunto badge di stato `Claude Live` nell'header del pannello agente e label `Claude AI` sui messaggi generati in modalità Claude.
+  - `backend/antigravity_bridge.py`: aggiunto supporto opzionale per richieste Claude tramite `/api/claude/chat` o `provider: "claude"` su `/api/antigravity/chat` (usando `ANTHROPIC_API_KEY` o `api_key` nel payload, senza dipendenze esterne aggiuntive).
+
 ---
 
 ## 🔒 Regole di Progetto Permanenti

@@ -25,6 +25,7 @@ export interface AgentPanelProps {
   isThinking: boolean;
   aiMode: AIMode;
   hasGeminiKey: boolean;
+  hasClaudeKey: boolean;
   bridgeConnected: boolean;
   activeTab?: OpenFileTab;
   selectedSnippet: string;
@@ -50,6 +51,7 @@ export const AgentPanel: React.FC<AgentPanelProps> = ({
   isThinking,
   aiMode,
   hasGeminiKey,
+  hasClaudeKey,
   bridgeConnected,
   activeTab,
   selectedSnippet,
@@ -100,6 +102,10 @@ export const AgentPanel: React.FC<AgentPanelProps> = ({
                     ? bridgeConnected
                       ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                       : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                    : aiMode === 'claude-direct'
+                    ? hasClaudeKey
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                      : 'bg-slate-800 text-slate-400 border border-slate-700'
                     : hasGeminiKey
                     ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
                     : 'bg-slate-800 text-slate-400 border border-slate-700'
@@ -109,6 +115,11 @@ export const AgentPanel: React.FC<AgentPanelProps> = ({
                   <>
                     <Cpu className="w-2.5 h-2.5" />
                     <span>SDK Bridge</span>
+                  </>
+                ) : aiMode === 'claude-direct' ? (
+                  <>
+                    <Cloud className="w-2.5 h-2.5" />
+                    <span>{hasClaudeKey ? 'Claude Live' : 'Demo / Setup'}</span>
                   </>
                 ) : (
                   <>
@@ -173,7 +184,11 @@ export const AgentPanel: React.FC<AgentPanelProps> = ({
           >
             <div className="flex items-center justify-between mb-1.5 text-[10px] text-slate-400">
               <span className="font-semibold uppercase tracking-wider">
-                {msg.role === 'user' ? 'Tu (Tablet)' : 'Antigravity AI'}
+                {msg.role === 'user'
+                  ? 'Tu (Tablet)'
+                  : msg.modeUsed === 'claude-direct'
+                  ? 'Claude AI'
+                  : 'Antigravity AI'}
               </span>
               <span>{msg.timestamp}</span>
             </div>

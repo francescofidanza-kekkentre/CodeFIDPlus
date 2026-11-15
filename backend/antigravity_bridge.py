@@ -17,6 +17,9 @@ Avvio rapido:
 import argparse
 import asyncio
 import json
+import os
+import urllib.error
+import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import Any, Dict, List
 
@@ -99,6 +102,62 @@ async def execute_antigravity_chat(
     }
 
 
+def execute_claude_chat(
+    prompt: str,
+    system_instructions: str,
+    api_key: str = "",
+    model: str = "claude-sonnet-4-20250514",
+) -> Dict[str, Any]:
+    """Esegue una richiesta verso Anthropic Claude Messages API dal bridge locale."""
+    resolved_key = (api_key or os.environ.get("ANTHROPIC_API_KEY", "")).strip()
+    if not resolved_key:
+        raise ValueError(
+            "ANTHROPIC_API_KEY non configurata sul server bridge né fornita nella richiesta."
+        )
+
+    payload = json.dumps(
+        {
+            "model": model or "claude-sonnet-4-20250514",
+            "max_tokens": 8192,
+            "temperature": 0.25,
+            "system": system_instructions,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+    ).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=payload,
+        method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "x-api-key": resolved_key,
+            "anthropic-version": "2023-06-01",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=90) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as err:
+        detail = err.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Anthropic API HTTP {err.code}: {detail}") from err
+
+    blocks = data.get("content", []) if isinstance(data, dict) else []
+    text_parts = [b.get("text", "") for b in blocks if b.get("type") == "text" and b.get("text")]
+    thinking_parts = [
+        b.get("thinking", "") for b in blocks if b.get("type") == "thinking" and b.get("thinking")
+    ]
+
+    return {
+        "reply": "\n".join(text_parts),
+        "thoughts": thinking_parts or [f"Elaborazione completata tramite Claude ({model}) via Bridge."],
+        "tool_calls": [],
+        "sdk_available": True,
+        "provider": "claude",
+    }
+
+
 class AntigravityBridgeHandler(BaseHTTPRequestHandler):
     """HTTP Handler con supporto CORS per il collegamento dal tablet Android."""
 
@@ -129,7 +188,7 @@ class AntigravityBridgeHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps({"error": "Endpoint non trovato"}).encode("utf-8"))
 
     def do_POST(self) -> None:
-        if self.path.startswith("/api/antigravity/chat"):
+        if self.path.startswith("/api/antigravity/chat") or self.path.startswith("/api/claude/chat"):
             content_length = int(self.headers.get("Content-Length", 0))
             raw_body = self.rfile.read(content_length).decode("utf-8") if content_length else "{}"
             try:
@@ -139,9 +198,18 @@ class AntigravityBridgeHandler(BaseHTTPRequestHandler):
                     "system_instructions",
                     "Sei Antigravity AI collegato a CodeFID+ Tablet IDE.",
                 )
-                result = asyncio.run(
-                    execute_antigravity_chat(prompt, system_instructions)
-                )
+                provider = body.get("provider", "claude" if self.path.startswith("/api/claude/chat") else "antigravity")
+                if provider == "claude":
+                    result = execute_claude_chat(
+                        prompt=prompt,
+                        system_instructions=system_instructions,
+                        api_key=body.get("api_key", ""),
+                        model=body.get("model", "claude-sonnet-4-20250514"),
+                    )
+                else:
+                    result = asyncio.run(
+                        execute_antigravity_chat(prompt, system_instructions)
+                    )
                 self._send_cors_headers(200)
                 self.wfile.write(json.dumps(result).encode("utf-8"))
             except Exception as exc:

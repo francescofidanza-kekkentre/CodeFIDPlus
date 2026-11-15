@@ -1,4 +1,4 @@
-export type AIMode = 'gemini-direct' | 'antigravity-bridge';
+export type AIMode = 'gemini-direct' | 'claude-direct' | 'antigravity-bridge';
 
 export interface GitHubRepo {
   id: number;
@@ -80,6 +80,8 @@ export interface AppSettings {
   aiMode: AIMode;
   geminiApiKey: string;
   geminiModel: string;
+  claudeApiKey: string;
+  claudeModel: string;
   bridgeUrl: string;
   fontSize: number;
   wordWrap: boolean;

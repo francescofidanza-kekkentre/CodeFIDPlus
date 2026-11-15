@@ -761,6 +761,7 @@ export const App: React.FC = () => {
             isThinking={isThinking}
             aiMode={settings.aiMode}
             hasGeminiKey={Boolean(settings.geminiApiKey.trim())}
+            hasClaudeKey={Boolean(settings.claudeApiKey.trim())}
             bridgeConnected={bridgeConnected}
             activeTab={activeTab}
             selectedSnippet={selectedSnippet}

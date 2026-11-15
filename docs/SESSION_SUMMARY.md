@@ -97,3 +97,8 @@ Quando si desidera impacchettare l'applicazione per la vendita su **Google Play 
    * Tutti i file vengono lasciati modificati/pronti nell'area di lavoro senza eseguire comandi `git add`, `git commit` o `git push` automatici.
 2. **Sincronizzazione Sessione (`.agents/rules/session-sync.md`):**
    * Alla fine di ogni turno, i file `docs/SESSION_SUMMARY.md` e `docs/CHAT_HISTORY.md` vengono aggiornati per preservare l'intero contesto e permetterne la sincronizzazione con qualsiasi altro dispositivo.
+
+---
+
+## 📍 6. Stato Attuale
+* **Ultimo aggiornamento:** 2026-11-15 — Implementata la compatibilità completa con l'agente **Claude (Anthropic)** sia in modalità autonoma browser (`claude-direct` in `src/services/aiService.ts`, `SettingsModal.tsx`, `AgentPanel.tsx`, `App.tsx`, `types.ts`, `storageService.ts`) sia nel bridge Python (`backend/antigravity_bridge.py`). Tutti i file sono pronti nel workspace (nessun commit/push eseguito).

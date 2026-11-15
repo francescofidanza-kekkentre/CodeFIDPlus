@@ -12,6 +12,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   aiMode: 'gemini-direct',
   geminiApiKey: '',
   geminiModel: 'gemini-2.5-pro',
+  claudeApiKey: '',
+  claudeModel: 'claude-sonnet-4-20250514',
   bridgeUrl: 'http://localhost:8765',
   fontSize: 15,
   wordWrap: true,

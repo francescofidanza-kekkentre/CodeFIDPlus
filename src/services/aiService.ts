@@ -23,7 +23,7 @@ export interface AIResponsePayload {
   thoughts: string[];
   toolCalls: AgentToolCall[];
   proposals: CodeProposal[];
-  modeUsed: 'gemini-direct' | 'antigravity-bridge' | 'demo';
+  modeUsed: 'gemini-direct' | 'claude-direct' | 'antigravity-bridge' | 'demo';
 }
 
 const ANTIGRAVITY_SYSTEM_PROMPT = `Sei Antigravity AI integrato in CodeFID+, un IDE PWA ottimizzato per tablet Android per programmare su GitHub.
@@ -145,6 +145,44 @@ export async function checkAntigravityBridgeHealth(bridgeUrl: string): Promise<{
   }
 }
 
+/**
+ * Formats chat history for Anthropic Messages API:
+ * - Filters out system/empty messages
+ * - Ensures alternating user/assistant turns starting with 'user'
+ */
+function buildClaudeMessages(
+  history: ChatMessage[],
+  contextualPrompt: string
+): Array<{ role: 'user' | 'assistant'; content: string }> {
+  const formatted: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+
+  for (const msg of history.slice(-6)) {
+    if (msg.role !== 'user' && msg.role !== 'assistant') continue;
+    const text = msg.content.trim();
+    if (!text) continue;
+
+    if (formatted.length === 0 && msg.role === 'assistant') {
+      continue;
+    }
+
+    const last = formatted[formatted.length - 1];
+    if (last && last.role === msg.role) {
+      last.content = `${last.content}\n\n${text}`;
+    } else {
+      formatted.push({ role: msg.role, content: text });
+    }
+  }
+
+  const last = formatted[formatted.length - 1];
+  if (last && last.role === 'user') {
+    last.content = `${last.content}\n\n${contextualPrompt}`;
+  } else {
+    formatted.push({ role: 'user', content: contextualPrompt });
+  }
+
+  return formatted;
+}
+
 export async function sendAgentPrompt(ctx: AIRequestContext): Promise<AIResponsePayload> {
   const { settings, activeTab, allOpenTabs, selectedText, prompt, repoFullName, branch } = ctx;
 
@@ -195,15 +233,74 @@ export async function sendAgentPrompt(ctx: AIRequestContext): Promise<AIResponse
         modeUsed: 'antigravity-bridge',
       };
     } catch (err) {
-      // If bridge fails and Gemini API key is configured, fall back or report clearly
-      if (!settings.geminiApiKey.trim()) {
+      // If bridge fails and no fallback cloud key is configured, return demo response
+      if (!settings.geminiApiKey.trim() && !settings.claudeApiKey.trim()) {
         return buildInteractiveDemoResponse(ctx, err instanceof Error ? err.message : String(err));
       }
     }
   }
 
-  // 2. Direct Browser Gemini API mode
-  if (settings.geminiApiKey.trim()) {
+  // 2. Direct Browser Claude (Anthropic) API mode
+  if (settings.aiMode === 'claude-direct' && settings.claudeApiKey.trim()) {
+    const model = settings.claudeModel || 'claude-sonnet-4-20250514';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': settings.claudeApiKey.trim(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 8192,
+        temperature: 0.25,
+        system: ANTIGRAVITY_SYSTEM_PROMPT,
+        messages: buildClaudeMessages(ctx.history, contextualPrompt),
+      }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(
+        errData?.error?.message || `Errore Claude API (${res.status}). Verifica la chiave API nelle Impostazioni.`
+      );
+    }
+
+    const data = await res.json();
+    const blocks: Array<{ type?: string; text?: string; thinking?: string }> = Array.isArray(data?.content)
+      ? data.content
+      : [];
+
+    const textParts = blocks
+      .filter((b) => b.type === 'text' && b.text)
+      .map((b) => b.text as string);
+    const thinkingParts = blocks
+      .filter((b) => b.type === 'thinking' && b.thinking)
+      .map((b) => b.thinking as string);
+
+    const content = textParts.join('\n');
+    const proposals = extractProposalsFromMarkdown(content, activeTab, allOpenTabs);
+
+    return {
+      content: content || 'Nessuna risposta generata.',
+      thoughts: [
+        ...thinkingParts,
+        `Analisi contestuale di ${activeTab?.path || repoFullName} completata tramite ${model}.`,
+        proposals.length > 0
+          ? `Generata ${proposals.length} proposta di modifica pronta per l'applicazione con 1 tap.`
+          : 'Risposta diretta elaborata.',
+      ],
+      toolCalls: activeTab
+        ? [{ name: 'inspect_active_tab', args: { path: activeTab.path, branch } }]
+        : [],
+      proposals,
+      modeUsed: 'claude-direct',
+    };
+  }
+
+  // 3. Direct Browser Gemini API mode
+  if (settings.aiMode === 'gemini-direct' && settings.geminiApiKey.trim()) {
     const model = settings.geminiModel || 'gemini-2.5-pro';
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
       model
@@ -301,8 +398,8 @@ function buildInteractiveDemoResponse(
 
   const replyMarkdown = [
     bridgeError
-      ? `> **Nota Bridge Locale**: Impossibile contattare il server Antigravity SDK locale (${bridgeError}). Rispondo in **Modalità Demo Interattiva** (puoi inserire una **Gemini API Key** nelle Impostazioni ⚙️ o avviare \`python backend/antigravity_bridge.py\`).\n`
-      : `> **Modalità Demo Interattiva Attiva**: Per usare il modello live, inserisci la tua **Gemini API Key** nelle Impostazioni (⚙️) oppure avvia il bridge locale \`backend/antigravity_bridge.py\`. Nel frattempo, ecco una proposta di modifica reale per testare subito il **Diff Viewer** e l'**Applicazione con 1 Tap**!\n`,
+      ? `> **Nota Bridge Locale**: Impossibile contattare il server Antigravity SDK locale (${bridgeError}). Rispondo in **Modalità Demo Interattiva** (puoi inserire una **Gemini o Claude API Key** nelle Impostazioni ⚙️ o avviare \`python backend/antigravity_bridge.py\`).\n`
+      : `> **Modalità Demo Interattiva Attiva**: Per usare il modello live, inserisci la tua **Gemini o Claude API Key** nelle Impostazioni (⚙️) oppure avvia il bridge locale \`backend/antigravity_bridge.py\`. Nel frattempo, ecco una proposta di modifica reale per testare subito il **Diff Viewer** e l'**Applicazione con 1 Tap**!\n`,
     `Ho analizzato **\`${targetPath}\`** in base alla tua richiesta (*"${prompt}"*) e ho preparato l'aggiornamento completo del file qui sotto:`,
     `\n\`\`\`${targetLang}:${targetPath}\n${proposedCode}\`\`\``,
   ].join('\n');
