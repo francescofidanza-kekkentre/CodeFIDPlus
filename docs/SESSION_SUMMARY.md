@@ -101,4 +101,4 @@ Quando si desidera impacchettare l'applicazione per la vendita su **Google Play 
 ---
 
 ## 📍 6. Stato Attuale
-* **Ultimo aggiornamento:** 2026-11-15 — Implementata la compatibilità completa con l'agente **Claude (Anthropic)** sia in modalità autonoma browser (`claude-direct` in `src/services/aiService.ts`, `SettingsModal.tsx`, `AgentPanel.tsx`, `App.tsx`, `types.ts`, `storageService.ts`) sia nel bridge Python (`backend/antigravity_bridge.py`). Tutti i file sono pronti nel workspace (nessun commit/push eseguito).
+* **Ultimo aggiornamento:** 2026-11-15 — Installato Node.js LTS `v26.13.1` (`npm 11.20.0`) tramite `nvm`, eseguite le dipendenze (`npm install`) e verificata con successo la build di produzione (`npm run build` → `tsc -b && vite build` completato con codice 0). Tutti i file modificati (inclusa la compatibilità Claude) sono compilati e pronti nel workspace.

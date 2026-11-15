@@ -110,6 +110,24 @@ Quando apri questo progetto con Antigravity su un altro computer:
   - `src/components/AgentPanel.tsx` & `src/App.tsx`: aggiunto badge di stato `Claude Live` nell'header del pannello agente e label `Claude AI` sui messaggi generati in modalità Claude.
   - `backend/antigravity_bridge.py`: aggiunto supporto opzionale per richieste Claude tramite `/api/claude/chat` o `provider: "claude"` su `/api/antigravity/chat` (usando `ANTHROPIC_API_KEY` o `api_key` nel payload, senza dipendenze esterne aggiuntive).
 
+### 15. Verifica Errore Esecuzione Comandi Sandbox
+- **Richiesta:** Chiarimento sul perché la compilazione da terminale (`npm run build`) non è stata eseguita.
+- **Esito:** Tentato `npm run build` via `run_command`; il sistema ha restituito `fork/exec /home/francescofidanza/.gemini/bin/agy: operation not permitted`, impedendo l'avvio di qualsiasi comando nel terminale sandbox di questa sessione.
+
+### 16. Test Esecuzione Fuori Sandbox e Verifica Ambiente Node.js
+- **Richiesta:** "puoi risolvere questa cosa?"
+- **Esito:**
+  - Eseguito `npm run build` fuori dalla sandbox (`BypassSandbox: true` con approvazione utente): il comando è partito correttamente ma ha restituito `npm: command not found`.
+  - Verificato che sul sistema Linux corrente mancano sia `node`/`npm` (anche in `~/.nvm/versions/node/*`) sia la cartella `node_modules`.
+  - La configurazione della sandbox di sistema dell'host non può essere modificata dall'agente; la compilazione può essere eseguita su GitHub Actions (come da workflow `.github/workflows/deploy.yml`) oppure localmente dopo aver installato Node.js e `npm install`.
+
+### 17. Installazione Node.js LTS, `npm install` e Verifica Build (`npm run build`)
+- **Richiesta:** "installa Node.js (e npm), poi esegui npm install && npm run build."
+- **Implementazione & Esito:**
+  - Installato `nvm` in `/home/francescofidanza/.var/app/com.visualstudio.code/config/nvm` e Node.js LTS `v26.13.1` (`npm v11.20.0`).
+  - Eseguito `npm install` (aggiunti 165 pacchetti) e `npm run build` (`tsc -b && vite build`).
+  - **Build riuscita con esito 0** in 15.06s (1629 moduli trasformati, output in `dist/index.html`, `dist/assets/index-CJgF7Oav.css`, `dist/assets/index-BvBPtCDK.js`), confermando l'assenza di errori TypeScript dopo l'integrazione di Claude.
+
 ---
 
 ## 🔒 Regole di Progetto Permanenti

@@ -16,6 +16,18 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
@@ -24,14 +36,14 @@
       "short_name": "Assistente AI",
       "description": "Avvia subito una sessione di coding con l'assistente AI",
       "url": "./index.html?panel=agent",
-      "icons": [{ "src": "./icon.svg", "sizes": "192x192" }]
+      "icons": [{ "src": "./icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Commit Rapido Git",
       "short_name": "Commit",
       "description": "Visualizza i file modificati e gestisci i commit Git",
       "url": "./index.html?panel=git",
-      "icons": [{ "src": "./icon.svg", "sizes": "192x192" }]
+      "icons": [{ "src": "./icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }
