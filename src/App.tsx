@@ -165,14 +165,21 @@ export const App: React.FC = () => {
     // On Android tablets, automatically enter immersive fullscreen (hiding bottom nav bar)
     const isAndroidDevice = /Android/i.test(navigator.userAgent);
     const tryEnterAndroidFullscreen = () => {
-      if (
-        !userExitedFullscreenRef.current &&
-        document.fullscreenEnabled &&
-        !document.fullscreenElement
-      ) {
-        document.documentElement
-          .requestFullscreen({ navigationUI: 'hide' })
-          .catch(() => {});
+      try {
+        if (
+          !userExitedFullscreenRef.current &&
+          document.fullscreenEnabled &&
+          !document.fullscreenElement
+        ) {
+          const promise = document.documentElement.requestFullscreen({
+            navigationUI: 'hide',
+          });
+          if (promise && typeof promise.catch === 'function') {
+            promise.catch(() => {});
+          }
+        }
+      } catch {
+        // Ignore on WebViews that reject fullscreen options synchronously
       }
     };
 

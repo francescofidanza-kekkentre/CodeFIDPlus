@@ -1,4 +1,4 @@
-const CACHE_NAME = 'codefid-plus-v4';
+const CACHE_NAME = 'codefid-plus-v5';
 
 // Force immediate activation without waiting for existing tabs to close
 self.addEventListener('install', (event) => {

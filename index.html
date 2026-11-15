@@ -26,8 +26,37 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180x180.png" />
     <title>CodeFID+ - Touch Code &amp; Git IDE</title>
   </head>
-  <body class="bg-[#0b0f19] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden">
+  <body style="background-color:#0b0f19;color:#f1f5f9;" class="bg-[#0b0f19] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden">
     <div id="root"></div>
+    <script>
+      // Auto-recovery if a stale cached HTML tries to load old deleted chunk hashes after a deploy
+      window.addEventListener(
+        'error',
+        function (e) {
+          var target = e.target;
+          if (
+            target &&
+            (target.tagName === 'SCRIPT' || target.tagName === 'LINK') &&
+            !sessionStorage.getItem('codefid_chunk_reload')
+          ) {
+            sessionStorage.setItem('codefid_chunk_reload', '1');
+            if ('caches' in window) {
+              caches.keys().then(function (keys) {
+                Promise.all(keys.map(function (k) { return caches.delete(k); })).finally(function () {
+                  window.location.reload();
+                });
+              });
+            } else {
+              window.location.reload();
+            }
+          }
+        },
+        true
+      );
+      window.addEventListener('load', function () {
+        sessionStorage.removeItem('codefid_chunk_reload');
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
