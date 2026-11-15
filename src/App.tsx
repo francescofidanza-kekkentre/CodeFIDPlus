@@ -8,6 +8,8 @@ import {
   Code2,
   Wifi,
   WifiOff,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import {
   AppSettings,
@@ -121,9 +123,14 @@ export const App: React.FC = () => {
     canApply: false,
   });
 
-  // PWA Install Prompt
+  // PWA Install Prompt & Fullscreen state (Android Tablet)
   const [deferredInstallPrompt, setDeferredInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(
+    typeof document !== 'undefined' ? Boolean(document.fullscreenElement) : false
+  );
+  const canUseFullscreen =
+    typeof document !== 'undefined' && Boolean(document.fullscreenEnabled);
 
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
@@ -132,14 +139,19 @@ export const App: React.FC = () => {
     };
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
 
@@ -566,10 +578,23 @@ export const App: React.FC = () => {
     setDeferredInstallPrompt(null);
   };
 
+  const handleToggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch {
+      // Ignore if browser/device blocks fullscreen request
+    }
+  };
+
   return (
-    <div className="h-[100dvh] w-screen flex flex-col bg-[#0b0f19] text-slate-100 overflow-hidden select-none">
-      {/* Top Android Tablet App Bar */}
-      <header className="h-12 bg-[#0f172a] border-b border-slate-800 px-3 flex items-center justify-between gap-2 shrink-0 z-30">
+    <div className="h-[100dvh] w-screen flex flex-col bg-[#0b0f19] text-slate-100 overflow-hidden select-none pb-[env(safe-area-inset-bottom)]">
+      {/* Top Tablet App Bar (with iPadOS Home Screen safe-area support) */}
+      <header className="bg-[#0f172a] border-b border-slate-800 pt-[env(safe-area-inset-top)] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 z-30">
+        <div className="h-12 flex items-center justify-between gap-2">
         {/* Left: Sidebar Toggle & Brand */}
         <div className="flex items-center gap-2 min-w-0">
           <button
@@ -669,6 +694,18 @@ export const App: React.FC = () => {
             <span>Agente AI</span>
           </button>
 
+          {/* Fullscreen Toggle (Android Tablet) */}
+          {canUseFullscreen && (
+            <button
+              type="button"
+              onClick={handleToggleFullscreen}
+              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200"
+              title={isFullscreen ? 'Esci da schermo intero' : 'Schermo intero'}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+          )}
+
           {/* Settings Button */}
           <button
             type="button"
@@ -678,6 +715,7 @@ export const App: React.FC = () => {
           >
             <Settings className="w-4 h-4" />
           </button>
+        </div>
         </div>
       </header>
 

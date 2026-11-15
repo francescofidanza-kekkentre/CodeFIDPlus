@@ -149,6 +149,20 @@ Quando apri questo progetto con Antigravity su un altro computer:
   - `.agents/rules/build-verification.md`: creata regola permanente `always_on` che istruisce l'agente a eseguire `npm run typecheck` dopo modifiche TypeScript, a saltare `vite build` per modifiche puramente statiche e a riservare la build completa a terminali esterni o GitHub Actions.
   - Eseguito `npm run typecheck` con esito `0`.
 
+### 20. Fix Sovrapposizione Barra di Stato iPadOS (PWA da Schermata Home)
+- **Richiesta:** "sistema l'imperfezione grafica in ipad quando apro app da schermata home" (con screenshot allegato).
+- **Causa individuata:** In modalità standalone iPadOS (`apple-mobile-web-app-status-bar-style="black-translucent"` + `viewport-fit=cover`), la barra di stato di sistema (`ora/data` a sinistra e `Wi-Fi/batteria` a destra) si sovrapponeva all'header dell'app perché `<header>` aveva altezza fissa `h-12` senza `env(safe-area-inset-top)`.
+- **Implementazione:**
+  - `src/App.tsx`: aggiunto `pt-[env(safe-area-inset-top)]`, `pl-[max(0.75rem,env(safe-area-inset-left))]` e `pr-[max(0.75rem,env(safe-area-inset-right))]` su `<header>` (mantenendo la barra interna a `h-12`) e `pb-[env(safe-area-inset-bottom)]` sul contenitore principale per proteggere anche la zona dell'Home Indicator in basso.
+  - Eseguito `npm run typecheck` con esito `0`.
+
+### 21. Apertura a Tutto Schermo su Tablet Android
+- **Richiesta:** "fai in modo che la app si apra a tutto schermo su tablet android"
+- **Implementazione:**
+  - `public/manifest.webmanifest`: impostato `"display": "fullscreen"` e `"display_override": ["fullscreen", "standalone", "minimal-ui"]` per avviare la PWA in modalità immersiva (senza barra di stato/navigazione di sistema) quando aperta dalla schermata Home di Android.
+  - `src/App.tsx`: aggiunto pulsante di attivazione/uscita schermo intero (`Maximize2`/`Minimize2`) nell'header (visibile sui dispositivi compatibili con Fullscreen API come i tablet Android) che invoca `document.documentElement.requestFullscreen({ navigationUI: 'hide' })` e si sincronizza con l'evento `fullscreenchange`.
+  - Eseguito `npm run typecheck` con esito `0`.
+
 ---
 
 ## 🔒 Regole di Progetto Permanenti

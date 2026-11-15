@@ -101,4 +101,4 @@ Quando si desidera impacchettare l'applicazione per la vendita su **Google Play 
 ---
 
 ## 📍 6. Stato Attuale
-* **Ultimo aggiornamento:** 2026-11-15 — Implementati i controlli ottimizzati: aggiunti `typecheck` e `build:lowmem` in `package.json`, `manualChunks` in `vite.config.ts` e la regola permanente `.agents/rules/build-verification.md`. `npm run typecheck` completato con codice 0. Tutti i file (Claude AI, icone iPad, ottimizzazioni build) sono pronti nel workspace (nessun commit/push eseguito).
+* **Ultimo aggiornamento:** 2026-11-15 — Configurato l'avvio a tutto schermo su tablet Android (`"display": "fullscreen"` in `public/manifest.webmanifest` e toggle Fullscreen API con `navigationUI: 'hide'` in `src/App.tsx`). `npm run typecheck` completato con codice 0. Tutti i file sono pronti nel workspace (nessun commit/push eseguito).
