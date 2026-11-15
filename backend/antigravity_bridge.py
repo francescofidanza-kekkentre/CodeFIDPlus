@@ -18,6 +18,7 @@ import argparse
 import asyncio
 import json
 import os
+import subprocess
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -188,6 +189,38 @@ class AntigravityBridgeHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps({"error": "Endpoint non trovato"}).encode("utf-8"))
 
     def do_POST(self) -> None:
+        if self.path.startswith("/api/terminal/exec"):
+            content_length = int(self.headers.get("Content-Length", 0))
+            raw_body = self.rfile.read(content_length).decode("utf-8") if content_length else "{}"
+            try:
+                body = json.loads(raw_body)
+                command = str(body.get("command", "")).strip()
+                if not command:
+                    self._send_cors_headers(400)
+                    self.wfile.write(json.dumps({"error": "Comando vuoto"}).encode("utf-8"))
+                    return
+                proc = subprocess.run(
+                    command,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=20,
+                )
+                self._send_cors_headers(200)
+                self.wfile.write(
+                    json.dumps(
+                        {
+                            "stdout": proc.stdout,
+                            "stderr": proc.stderr,
+                            "exit_code": proc.returncode,
+                        }
+                    ).encode("utf-8")
+                )
+            except Exception as exc:
+                self._send_cors_headers(500)
+                self.wfile.write(json.dumps({"error": str(exc)}).encode("utf-8"))
+            return
+
         if self.path.startswith("/api/antigravity/chat") or self.path.startswith("/api/claude/chat"):
             content_length = int(self.headers.get("Content-Length", 0))
             raw_body = self.rfile.read(content_length).decode("utf-8") if content_length else "{}"

@@ -53,6 +53,7 @@ import { GitCommitModal } from './components/GitCommitModal';
 import { SettingsModal } from './components/SettingsModal';
 import { ActionInputModal } from './components/ActionInputModal';
 import { SetupWizardModal } from './components/SetupWizardModal';
+import { TerminalPane } from './components/TerminalPane';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -807,8 +808,9 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* Center Pane: CodeMirror 6 Editor + Touch Symbol Bar */}
-        <EditorPane
+        {/* Center Column: CodeMirror 6 Editor (top) + Collapsible Terminal (bottom) */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+          <EditorPane
           tabs={tabs}
           activeTabPath={activeTabPath}
           onSelectTab={setActiveTabPath}
@@ -847,6 +849,37 @@ export const App: React.FC = () => {
             setSettings((s) => ({ ...s, showLivePreview: !s.showLivePreview }))
           }
         />
+
+          <TerminalPane
+            repoFullName={`${settings.activeOwner}/${settings.activeRepo}`}
+            branch={settings.activeBranch}
+            tree={tree}
+            tabs={tabs}
+            branches={branches}
+            bridgeUrl={settings.bridgeUrl}
+            bridgeConnected={bridgeConnected}
+            onCreateFile={handleCreateNewFile}
+            onOpenFile={(filePath) => {
+              const findNode = (nodes: FileTreeNode[]): FileTreeNode | undefined => {
+                for (const n of nodes) {
+                  if (n.path === filePath && n.type === 'blob') return n;
+                  if (n.children) {
+                    const found = findNode(n.children);
+                    if (found) return found;
+                  }
+                }
+                return undefined;
+              };
+              const node = findNode(tree) ?? {
+                path: filePath,
+                name: filePath.split('/').pop() || filePath,
+                type: 'blob' as const,
+                sha: '',
+              };
+              handleSelectFile(node);
+            }}
+          />
+        </div>
 
         {/* Right Pane: Antigravity AI Assistant & 1-Tap Diff Cards */}
         {showAgentPanel && (
