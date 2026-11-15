@@ -3,6 +3,7 @@ import { AppSettings, FileTreeNode, OpenFileTab } from '../types';
 const SETTINGS_KEY = 'codefid_plus_settings_v1';
 const DRAFTS_KEY = 'codefid_plus_drafts_v1';
 const SESSION_KEY = 'codefid_plus_session_v1';
+const WIZARD_DONE_KEY = 'codefid_plus_wizard_done_v1';
 
 export const DEFAULT_SETTINGS: AppSettings = {
   githubToken: '',
@@ -25,13 +26,7 @@ export function loadSettings(): AppSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return DEFAULT_SETTINGS;
-    const parsed = { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
-    // If previously saved with hardcoded personal repo or empty token, ensure a clean initial state
-    if (parsed.activeOwner === 'francescofidanza-kekkentre' && !parsed.githubToken) {
-      parsed.activeOwner = '';
-      parsed.activeRepo = '';
-    }
-    return parsed;
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
   } catch {
     return DEFAULT_SETTINGS;
   }
@@ -119,5 +114,21 @@ export function loadSession(repoKey: string): StoredSession | null {
     return JSON.parse(raw);
   } catch {
     return null;
+  }
+}
+
+export function isSetupWizardCompleted(): boolean {
+  try {
+    return localStorage.getItem(WIZARD_DONE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function markSetupWizardCompleted(): void {
+  try {
+    localStorage.setItem(WIZARD_DONE_KEY, 'true');
+  } catch {
+    // ignore
   }
 }

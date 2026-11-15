@@ -10,6 +10,7 @@ import {
   WifiOff,
   Maximize2,
   Minimize2,
+  Wand2,
 } from 'lucide-react';
 import {
   AppSettings,
@@ -28,6 +29,8 @@ import {
   clearDraftsForRepo,
   saveSession,
   loadSession,
+  isSetupWizardCompleted,
+  markSetupWizardCompleted,
 } from './services/storageService';
 import {
   commitMultipleFilesToGitHub,
@@ -50,6 +53,7 @@ import { DiffViewerModal } from './components/DiffViewerModal';
 import { GitCommitModal } from './components/GitCommitModal';
 import { SettingsModal } from './components/SettingsModal';
 import { ActionInputModal } from './components/ActionInputModal';
+import { SetupWizardModal } from './components/SetupWizardModal';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -108,6 +112,13 @@ export const App: React.FC = () => {
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showCommitModal, setShowCommitModal] = useState<boolean>(false);
   const [actionModalMode, setActionModalMode] = useState<'file' | 'branch' | null>(null);
+  const [showSetupWizard, setShowSetupWizard] = useState<boolean>(() => {
+    const s = loadSettings();
+    const hasAnyConfig = Boolean(
+      s.githubToken.trim() || s.geminiApiKey.trim() || s.claudeApiKey.trim()
+    );
+    return !hasAnyConfig && !isSetupWizardCompleted();
+  });
   const [diffModalState, setDiffModalState] = useState<{
     isOpen: boolean;
     filePath: string;
@@ -718,6 +729,21 @@ export const App: React.FC = () => {
             <span>Agente AI</span>
           </button>
 
+          {/* Quick Setup Wizard Button (shown when not yet configured) */}
+          {!settings.githubToken.trim() &&
+            !settings.geminiApiKey.trim() &&
+            !settings.claudeApiKey.trim() && (
+              <button
+                type="button"
+                onClick={() => setShowSetupWizard(true)}
+                className="px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold flex items-center gap-1.5"
+                title="Avvia Procedura Guidata Chiavi"
+              >
+                <Wand2 className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden md:inline">Setup Guidato</span>
+              </button>
+            )}
+
           {/* Fullscreen Toggle (Android Tablet) */}
           {canUseFullscreen && (
             <button
@@ -929,6 +955,22 @@ export const App: React.FC = () => {
         settings={settings}
         onSave={(newSettings) => setSettings(newSettings)}
         onClose={() => setShowSettingsModal(false)}
+        onOpenWizard={() => setShowSetupWizard(true)}
+      />
+
+      {/* Guided Setup Wizard Modal */}
+      <SetupWizardModal
+        isOpen={showSetupWizard}
+        settings={settings}
+        onComplete={(newSettings) => {
+          setSettings(newSettings);
+          markSetupWizardCompleted();
+          setShowSetupWizard(false);
+        }}
+        onSkip={() => {
+          markSetupWizardCompleted();
+          setShowSetupWizard(false);
+        }}
       />
 
       {/* Custom Dark Modal for New File / New Branch (replaces native browser prompt) */}

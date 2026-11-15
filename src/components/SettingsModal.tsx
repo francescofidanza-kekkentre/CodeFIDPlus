@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Tablet,
+  Wand2,
 } from 'lucide-react';
 import { AppSettings } from '../types';
 import { checkAntigravityBridgeHealth } from '../services/aiService';
@@ -17,6 +18,7 @@ export interface SettingsModalProps {
   settings: AppSettings;
   onSave: (newSettings: AppSettings) => void;
   onClose: () => void;
+  onOpenWizard?: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -24,6 +26,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   settings,
   onSave,
   onClose,
+  onOpenWizard,
 }) => {
   const [draft, setDraft] = useState<AppSettings>(settings);
   const [bridgeStatus, setBridgeStatus] = useState<{
@@ -76,13 +79,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               Impostazioni CodeFID+ (Git &amp; Assistente AI Ibrido)
             </h3>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {onOpenWizard && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenWizard();
+                }}
+                className="px-2.5 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/35 border border-indigo-500/40 text-indigo-300 text-[11px] font-semibold flex items-center gap-1.5"
+              >
+                <Wand2 className="w-3.5 h-3.5" />
+                <span>Setup Guidato</span>
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Body */}
