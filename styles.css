@@ -1,0 +1,7 @@
+:root { --bg-page: #f8fafc; ... }
+[data-theme="dark"] {
+  --bg-page: #0b1120;
+  --bg-surface: #1e293b;
+  /* ... mantenimento variabili ... */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
